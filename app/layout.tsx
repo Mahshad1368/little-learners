@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Header } from "@/components/Header";
-import { MobileNav } from "@/components/MobileNav";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Little Learners",
-  description: "A playful educational web app for children aged 3 to 7.",
+  description: "A simple playful letter game for toddlers aged 2 to 4.",
   icons: {
     icon: "/favicon.svg"
   }
@@ -20,7 +19,6 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <ThemeProvider>
           <Header />
           <main>{children}</main>
-          <MobileNav />
         </ThemeProvider>
       </body>
     </html>
