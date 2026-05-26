@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(255, 209, 102, 0.35), transparent 28%),
+    radial-gradient(circle at 85% 10%, rgba(94, 234, 212, 0.32), transparent 26%),
+    linear-gradient(135deg, #f7fee7 0%, #fff7ed 46%, #ecfeff 100%);
+  color: #24304f;
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.24), transparent 28%),
+    radial-gradient(circle at 85% 10%, rgba(14, 165, 233, 0.22), transparent 26%),
+    linear-gradient(135deg, #020617 0%, #111827 52%, #172554 100%);
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.triangle-shape {
+  width: 0;
+  height: 0;
+  border-left: 4rem solid transparent;
+  border-right: 4rem solid transparent;
+  border-bottom: 7rem solid #ffd166;
+  background: transparent;
+}
+
+@media (min-width: 640px) {
+  .triangle-shape {
+    border-left-width: 5rem;
+    border-right-width: 5rem;
+    border-bottom-width: 8.5rem;
+  }
+}
+
+@layer components {
+  .page-pad {
+    @apply mx-auto max-w-7xl px-4 py-10 pb-28 sm:px-6 sm:py-14 md:pb-16 lg:px-8;
+  }
+
+  .lesson-card {
+    @apply rounded-[2rem] border border-white/75 bg-white/80 p-5 shadow-soft backdrop-blur transition dark:border-white/10 dark:bg-white/10;
+  }
+
+  .kid-button {
+    @apply inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-black text-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift focus:outline-none focus:ring-4 focus:ring-banana/60 dark:bg-white dark:text-ink;
+  }
+}
