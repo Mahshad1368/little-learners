@@ -16,6 +16,8 @@
 
 html {
   scroll-behavior: smooth;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -27,6 +29,9 @@ body {
     linear-gradient(135deg, #fff7ed 0%, #ecfeff 50%, #f0fdf4 100%);
   color: #24304f;
   overflow-x: hidden;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .dark body {
@@ -62,7 +67,14 @@ body {
 
 button,
 a {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
 }
 
 .triangle-shape {
