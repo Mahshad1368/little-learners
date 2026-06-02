@@ -5,14 +5,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { cheers, mascotFaces, miniGames, toddlerAnimals, toddlerLetters } from "@/data/toddlerGame";
 import { cn } from "@/utils/cn";
 import { useSoundEffects } from "@/utils/useSoundEffects";
-import { useSpeech } from "@/utils/useSpeech";
+import { useVoiceQueue } from "@/utils/useVoiceQueue";
 
 type Mode = "home" | "letters" | "animals" | "minis";
 type MiniGameId = (typeof miniGames)[number]["id"];
 type ToddlerAnimal = (typeof toddlerAnimals)[number];
+type VoiceClipKind = "encouragement" | "instruction";
 type RecordedVoiceClip = {
   id: string;
   label: string;
+  kind: VoiceClipKind;
   dataUrl: string;
   createdAt: number;
 };
@@ -24,6 +26,7 @@ type GameFeedback = {
 };
 
 const SETUP_KEY = "little-learners-parent-setup-complete";
+const SETUP_VERSION = "2";
 const VOICE_KEY = "little-learners-parent-voice-clips";
 const STARS_KEY = "little-learners-toy-stars";
 const MUTE_KEY = "little-learners-muted";
@@ -67,13 +70,15 @@ export function ToddlerLetterGame() {
   const [storageReady, setStorageReady] = useState(false);
   const [voiceClips, setVoiceClips] = useState<RecordedVoiceClip[]>([]);
   const [muted, setMuted] = useState(false);
-  const { speak } = useSpeech();
+  const voiceQueue = useVoiceQueue(muted);
   const { playBuzzer, playCheer, playClap, playPop, playSparkle } = useSoundEffects(muted);
 
   const targetLetter = toddlerLetters[round % toddlerLetters.length];
   const targetAnimal = toddlerAnimals[round % toddlerAnimals.length];
   const starSlots = Array.from({ length: 8 }, (_, index) => index < Math.min(stars, 8));
   const cheer = cheers[(round + stars) % cheers.length];
+  const encouragementClips = voiceClips.filter((clip) => clip.kind === "encouragement");
+  const instructionClip = voiceClips.find((clip) => clip.kind === "instruction") ?? null;
 
   const floatingLetters = useMemo(() => {
     const start = round % toddlerLetters.length;
@@ -88,13 +93,19 @@ export function ToddlerLetterGame() {
   }, [round, targetAnimal]);
 
   useEffect(() => {
-    setSetupComplete(window.localStorage.getItem(SETUP_KEY) === "true");
+    setSetupComplete(window.localStorage.getItem(SETUP_KEY) === SETUP_VERSION);
     setMuted(window.localStorage.getItem(MUTE_KEY) === "true");
 
     const storedClips = window.localStorage.getItem(VOICE_KEY);
     if (storedClips) {
       try {
-        setVoiceClips(JSON.parse(storedClips) as RecordedVoiceClip[]);
+        const parsedClips = JSON.parse(storedClips) as Array<RecordedVoiceClip | Omit<RecordedVoiceClip, "kind">>;
+        setVoiceClips(
+          parsedClips.map((clip) => ({
+            ...clip,
+            kind: "kind" in clip ? clip.kind : "encouragement"
+          }))
+        );
       } catch {
         setVoiceClips([]);
       }
@@ -117,33 +128,56 @@ export function ToddlerLetterGame() {
 
   useEffect(() => {
     if (mode === "letters") {
-      const timer = window.setTimeout(() => !muted && speak(`Catch ${targetLetter}!`), 450);
+      const timer = window.setTimeout(() => playInstruction("Catch", targetLetter), 450);
       return () => window.clearTimeout(timer);
     }
 
     if (mode === "animals") {
-      const timer = window.setTimeout(() => !muted && speak(`Find the ${targetAnimal.name}!`), 450);
+      const timer = window.setTimeout(() => playInstruction("Find", targetAnimal.name), 450);
       return () => window.clearTimeout(timer);
     }
-  }, [mode, muted, speak, targetAnimal.name, targetLetter]);
+  }, [mode, targetAnimal.name, targetLetter]);
 
-  function playParentVoice(fallbackVoice: string) {
+  function wait(milliseconds: number) {
+    return new Promise<void>((resolve) => {
+      window.setTimeout(resolve, milliseconds);
+    });
+  }
+
+  async function playInstruction(action: string, target: string) {
     if (muted) {
       return;
     }
 
-    const clip = voiceClips.length > 0 ? voiceClips[Math.floor(Math.random() * voiceClips.length)] : null;
-    if (clip) {
-      const audio = new Audio(clip.dataUrl);
-      audio.volume = 0.9;
-      void audio.play().catch(() => speak(fallbackVoice));
+    if (instructionClip) {
+      await voiceQueue.playInstruction(instructionClip.dataUrl, target);
       return;
     }
 
-    speak(fallbackVoice);
+    await voiceQueue.speak(`${action} ${target}`, 3);
   }
 
-  function reward(extraVoice?: string) {
+  async function playEncouragement(fallbackVoice: string) {
+    if (muted) {
+      await wait(1000);
+      return;
+    }
+
+    const clip = encouragementClips.length > 0 ? encouragementClips[Math.floor(Math.random() * encouragementClips.length)] : null;
+    if (clip) {
+      await voiceQueue.playClip(clip.dataUrl, 1);
+      return;
+    }
+
+    await voiceQueue.speak(fallbackVoice, 1);
+  }
+
+  async function reward(extraVoice?: string) {
+    if (feedback.celebrating) {
+      return;
+    }
+
+    voiceQueue.clear();
     setFeedback((current) => ({
       wrongChoice: null,
       celebrationId: current.celebrationId + 1,
@@ -154,12 +188,12 @@ export function ToddlerLetterGame() {
     playClap();
     playCheer();
     playSparkle();
-    playParentVoice(extraVoice ?? cheer);
 
-    window.setTimeout(() => {
-      setFeedback((current) => ({ ...current, celebrating: false }));
-      setRound((current) => current + 1);
-    }, 1450);
+    await playEncouragement(extraVoice ?? cheer);
+    await wait(500);
+
+    setFeedback((current) => ({ ...current, celebrating: false }));
+    setRound((current) => current + 1);
   }
 
   function retry(id: string) {
@@ -169,17 +203,10 @@ export function ToddlerLetterGame() {
   }
 
   function chooseMode(nextMode: Mode) {
+    voiceQueue.clear();
     setMode(nextMode);
     setParentOpen(false);
     playPop();
-
-    if (!muted && nextMode === "letters") {
-      speak(`Catch ${targetLetter}!`);
-    }
-
-    if (!muted && nextMode === "animals") {
-      speak(`Find the ${targetAnimal.name}!`);
-    }
   }
 
   function chooseLetter(letter: string) {
@@ -206,9 +233,11 @@ export function ToddlerLetterGame() {
       fishing: `Catch ${targetLetter}!`,
       star: "Catch star!"
     };
-    if (!muted) {
-      speak(prompts[id]);
+    if (id === "fishing") {
+      void playInstruction("Catch", targetLetter);
+      return;
     }
+    void voiceQueue.speak(prompts[id], 3);
   }
 
   function resetStars() {
@@ -221,7 +250,7 @@ export function ToddlerLetterGame() {
   function completeSetup(clips: RecordedVoiceClip[]) {
     setVoiceClips(clips);
     window.localStorage.setItem(VOICE_KEY, JSON.stringify(clips));
-    window.localStorage.setItem(SETUP_KEY, "true");
+    window.localStorage.setItem(SETUP_KEY, SETUP_VERSION);
     setSetupComplete(true);
   }
 
@@ -319,12 +348,26 @@ export function ToddlerLetterGame() {
 
 function ParentSetupScreen({ onContinue }: { onContinue: (clips: RecordedVoiceClip[]) => void }) {
   const [clips, setClips] = useState<RecordedVoiceClip[]>([]);
-  const [recordingSlot, setRecordingSlot] = useState<1 | 2 | null>(null);
+  const [recordingSlot, setRecordingSlot] = useState<VoiceClipKind | null>(null);
   const [error, setError] = useState<string | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const setupSlots: Array<{ kind: VoiceClipKind; title: string; prompt: string; button: string }> = [
+    {
+      kind: "encouragement",
+      title: "Encouragement",
+      prompt: "Try: “Yay!” or “Great job!”",
+      button: "Record encouragement"
+    },
+    {
+      kind: "instruction",
+      title: "Instruction",
+      prompt: "Try: “Catch” or “Find”",
+      button: "Record instruction"
+    }
+  ];
 
-  async function startRecording(slot: 1 | 2) {
+  async function startRecording(kind: VoiceClipKind) {
     if (!navigator.mediaDevices || !window.MediaRecorder) {
       setError("Recording is not available in this browser. You can skip for now.");
       return;
@@ -335,7 +378,7 @@ function ParentSetupScreen({ onContinue }: { onContinue: (clips: RecordedVoiceCl
       const recorder = new MediaRecorder(stream);
       chunksRef.current = [];
       recorderRef.current = recorder;
-      setRecordingSlot(slot);
+      setRecordingSlot(kind);
       setError(null);
 
       recorder.ondataavailable = (event) => {
@@ -350,16 +393,17 @@ function ParentSetupScreen({ onContinue }: { onContinue: (clips: RecordedVoiceCl
         reader.onloadend = () => {
           const dataUrl = String(reader.result);
           setClips((current) => {
-            const withoutSlot = current.filter((clip) => clip.id !== `voice-${slot}`);
+            const withoutSlot = current.filter((clip) => clip.kind !== kind);
             return [
               ...withoutSlot,
               {
-                id: `voice-${slot}`,
-                label: `Voice ${slot}`,
+                id: `voice-${kind}`,
+                label: kind === "encouragement" ? "Encouragement" : "Instruction",
+                kind,
                 dataUrl,
                 createdAt: Date.now()
               }
-            ].sort((a, b) => a.id.localeCompare(b.id));
+            ].sort((a, b) => a.kind.localeCompare(b.kind));
           });
         };
         reader.readAsDataURL(blob);
@@ -380,8 +424,8 @@ function ParentSetupScreen({ onContinue }: { onContinue: (clips: RecordedVoiceCl
     }
   }
 
-  function playPreview(slot: 1 | 2) {
-    const clip = clips.find((item) => item.id === `voice-${slot}`);
+  function playPreview(kind: VoiceClipKind) {
+    const clip = clips.find((item) => item.kind === kind);
     if (!clip) {
       return;
     }
@@ -398,31 +442,31 @@ function ParentSetupScreen({ onContinue }: { onContinue: (clips: RecordedVoiceCl
           <div className="grid h-20 w-20 place-items-center rounded-full bg-banana text-5xl shadow-soft" aria-hidden="true">🎙️</div>
           <div>
             <p className="text-sm font-black uppercase tracking-[0.16em] text-berry">Parent setup</p>
-            <h1 className="text-3xl font-black text-ink dark:text-white sm:text-5xl">Record happy voices</h1>
+            <h1 className="text-3xl font-black text-ink dark:text-white sm:text-5xl">Record parent voices</h1>
           </div>
         </div>
 
         <p className="max-w-2xl text-lg font-bold leading-8 text-slate-600 dark:text-slate-300">
-          Add one or two short encouragement clips for reward moments. Try “Yay! Great job!” or “Bravo! You did it!”
+          Record one happy voice and one short instruction word. The game will use your voice for rewards and prompts.
         </p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {[1, 2].map((slot) => {
-            const typedSlot = slot as 1 | 2;
-            const hasClip = clips.some((clip) => clip.id === `voice-${typedSlot}`);
-            const isRecording = recordingSlot === typedSlot;
+          {setupSlots.map((slot) => {
+            const hasClip = clips.some((clip) => clip.kind === slot.kind);
+            const isRecording = recordingSlot === slot.kind;
 
             return (
-              <div key={slot} className="rounded-[2rem] bg-white/75 p-4 shadow-soft dark:bg-white/10">
-                <p className="mb-3 text-xl font-black text-ink dark:text-white">Voice {slot}</p>
+              <div key={slot.kind} className="rounded-[2rem] bg-white/75 p-4 shadow-soft dark:bg-white/10">
+                <p className="text-xl font-black text-ink dark:text-white">{slot.title}</p>
+                <p className="mb-3 mt-1 text-sm font-bold text-slate-600 dark:text-slate-300">{slot.prompt}</p>
                 <div className="grid gap-3">
-                  <button className={cn("min-h-16 rounded-[1.5rem] px-5 text-lg font-black text-white shadow-soft", isRecording ? "bg-red-400" : "bg-berry")} onClick={() => startRecording(typedSlot)} disabled={recordingSlot !== null} type="button">
-                    {isRecording ? "Recording..." : `Record voice ${slot}`}
+                  <button className={cn("min-h-16 rounded-[1.5rem] px-5 text-lg font-black text-white shadow-soft", isRecording ? "bg-red-400" : "bg-berry")} onClick={() => startRecording(slot.kind)} disabled={recordingSlot !== null} type="button">
+                    {isRecording ? "Recording..." : slot.button}
                   </button>
                   <button className="min-h-14 rounded-[1.5rem] bg-ink px-5 text-base font-black text-white shadow-soft disabled:opacity-35 dark:bg-white dark:text-ink" onClick={stopRecording} disabled={!isRecording} type="button">
                     Stop recording
                   </button>
-                  <button className="min-h-14 rounded-[1.5rem] bg-banana px-5 text-base font-black text-ink shadow-soft disabled:opacity-35" onClick={() => playPreview(typedSlot)} disabled={!hasClip || recordingSlot !== null} type="button">
+                  <button className="min-h-14 rounded-[1.5rem] bg-banana px-5 text-base font-black text-ink shadow-soft disabled:opacity-35" onClick={() => playPreview(slot.kind)} disabled={!hasClip || recordingSlot !== null} type="button">
                     Play preview
                   </button>
                 </div>

@@ -4,8 +4,8 @@ Little Learners is a toddler-first interactive toy for children aged 2-4. It is 
 
 ## Features
 
-- Parent onboarding asks for one or two short encouragement voice recordings
-- Parent recordings are saved locally and played during reward moments
+- Parent onboarding asks for an encouragement recording and an instruction recording
+- Parent recordings are saved locally and used for reward moments and prompts
 - Skip option uses built-in cheerful voice prompts and generated sound effects
 - Simple home screen with three giant toy buttons: Letters, Animals, and Mini Games
 - Floating letter catch mode with water-like drifting motion
@@ -15,6 +15,8 @@ Little Learners is a toddler-first interactive toy for children aged 2-4. It is 
 - Cute mascot prompts and happy reactions
 - Voice instructions such as "Catch B!" and "Find the Lion!"
 - Encouraging voice rewards such as "Yay!" and "Awesome!"
+- Queued voice system prevents parent clips and TTS from overlapping
+- Correct answers wait for the parent encouragement clip to finish before advancing
 - Generated pop, clap, crowd-cheer, sparkle, and wrong-buzzer effects through the Web Audio API
 - Big reward burst with stars, flowers, hearts, confetti, mascot jumps, and earned stars
 - Correct targets pulse, brighten, and glow softly so toddlers can find them quickly
@@ -39,11 +41,20 @@ Little Learners is a toddler-first interactive toy for children aged 2-4. It is 
 
 ## Parent Voice Recording
 
-On first launch, parents see a simple setup screen with two recording slots. They can record, stop, preview, continue, or skip. Clips are stored locally in the browser and randomly played when the child answers correctly. If recordings are skipped or unavailable, the app uses built-in happy voice prompts.
+On first launch, parents see a simple setup screen with two recording slots:
+
+- Encouragement: examples include "Yay!", "Great job!", or "Bravo!"
+- Instruction: examples include "Catch" or "Find"
+
+Parents can record, stop, preview, continue, or skip. Clips are stored locally in the browser. When an instruction clip exists, the app plays the parent recording first, then uses speech synthesis only for the target word, such as `A`, `Lion`, or `Dog`. If recordings are skipped or unavailable, the app uses built-in speech prompts.
 
 ## Reward System
 
-Correct answers trigger a joyful multi-sensory moment: claps, cheer tones, sparkles, parent voice or fallback encouragement, confetti, flowers, hearts, mascot animation, a happy bounce on the selected item, and a saved star. Wrong taps only affect the tapped item with a short red wobble and a soft buzzer.
+Correct answers trigger a joyful multi-sensory moment: claps, cheer tones, sparkles, parent encouragement voice or fallback encouragement, confetti, flowers, hearts, mascot animation, a happy bounce on the selected item, and a saved star. If a parent encouragement clip exists, built-in praise does not play. The app waits for the parent clip's `ended` event, pauses for 500ms, and then moves to the next target. Wrong taps only affect the tapped item with a short red wobble and a soft buzzer.
+
+## Audio Queue
+
+Voice playback is managed by a small queue so speech does not overlap. Parent encouragement has highest priority, then parent instruction, then target speech synthesis. Sound effects stay short and balanced underneath the celebration.
 
 ## Touch-Safe UX
 
