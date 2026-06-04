@@ -34,6 +34,16 @@ body {
   -webkit-user-select: none;
 }
 
+html[dir="rtl"] body {
+  text-align: right;
+}
+
+html[lang="fa"] body,
+html[lang="fa"] button,
+html[lang="fa"] select {
+  font-family: Tahoma, "Arial", system-ui, sans-serif;
+}
+
 .dark body {
   background:
     radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.24), transparent 28%),

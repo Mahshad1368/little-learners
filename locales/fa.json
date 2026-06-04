@@ -1,0 +1,56 @@
+{
+  "language": {
+    "label": "زبان",
+    "en": "English",
+    "de": "Deutsch",
+    "fa": "فارسی"
+  },
+  "setup": {
+    "eyebrow": "فقط برای والدین",
+    "headline": "تنظیم صدای والدین",
+    "subheadline": "صدای خود را ضبط کنید تا کودک شما هنگام بازی صدایی آشنا و دلگرم‌کننده بشنود.",
+    "noticeTitle": "فقط برای والدین",
+    "noticeBody": "صدای ضبط‌شده شما در بازی برای تشویق کودک استفاده می‌شود.",
+    "micLabel": "صدای شما بازی را برای کودک آشنا و امن می‌کند.",
+    "startRecording": "شروع ضبط",
+    "recording": "در حال ضبط...",
+    "stopRecording": "توقف ضبط",
+    "playPreview": "پخش نمونه",
+    "recordAgain": "ضبط مجدد",
+    "continue": "ادامه",
+    "skip": "فعلا رد کن",
+    "duration": "مدت زمان",
+    "instructionTitle": "صدای دستور",
+    "instructionPrompt": "مثلا بگویید: بگیر یا پیدا کن",
+    "encouragementTitle": "صدای تشویق",
+    "encouragementPrompt": "مثلا بگویید: آفرین! عالی بود!",
+    "permissionError": "اجازه دسترسی به میکروفون داده نشد. می‌توانید فعلا رد کنید.",
+    "unsupportedError": "ضبط صدا در این مرورگر در دسترس نیست. می‌توانید فعلا رد کنید."
+  },
+  "home": {
+    "toyTime": "وقت بازی",
+    "letters": "حروف",
+    "animals": "حیوانات",
+    "miniGames": "بازی‌ها",
+    "parentArea": "بخش والدین",
+    "home": "خانه"
+  },
+  "game": {
+    "catch": "بگیر",
+    "find": "پیدا کن",
+    "pop": "بترکان!",
+    "feedMonster": "به هیولا غذا بده!",
+    "catchStar": "ستاره را بگیر!"
+  },
+  "parent": {
+    "title": "بخش والدین",
+    "stars": "ستاره گرفته شد",
+    "clipsSaved": "صدای والدین ذخیره شد.",
+    "builtIn": "از صداهای شاد پیش‌فرض استفاده می‌شود.",
+    "mute": "بی‌صدا",
+    "soundOn": "صدا روشن",
+    "recordVoices": "ضبط صداها",
+    "reset": "شروع دوباره",
+    "close": "بستن"
+  }
+}

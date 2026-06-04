@@ -1,0 +1,56 @@
+{
+  "language": {
+    "label": "Sprache",
+    "en": "English",
+    "de": "Deutsch",
+    "fa": "فارسی"
+  },
+  "setup": {
+    "eyebrow": "Nur für Eltern",
+    "headline": "Stimme der Eltern einrichten",
+    "subheadline": "Nehmen Sie Ihre Stimme auf, damit Ihr Kind während des Spiels vertraute Ermutigungen hört.",
+    "noticeTitle": "Nur für Eltern",
+    "noticeBody": "Ihre aufgenommene Stimme wird im Spiel verwendet, um Ihr Kind zu ermutigen.",
+    "micLabel": "Ihre Stimme macht das Spiel vertraut.",
+    "startRecording": "Aufnahme starten",
+    "recording": "Aufnahme läuft...",
+    "stopRecording": "Aufnahme stoppen",
+    "playPreview": "Vorschau anhören",
+    "recordAgain": "Erneut aufnehmen",
+    "continue": "Weiter",
+    "skip": "Jetzt überspringen",
+    "duration": "Dauer",
+    "instructionTitle": "Anweisungsstimme",
+    "instructionPrompt": "Sagen Sie zum Beispiel: Fang oder Finde",
+    "encouragementTitle": "Ermutigungsstimme",
+    "encouragementPrompt": "Sagen Sie zum Beispiel: Yay! Gut gemacht!",
+    "permissionError": "Die Mikrofonberechtigung wurde nicht erteilt. Sie können vorerst überspringen.",
+    "unsupportedError": "Aufnahme ist in diesem Browser nicht verfügbar. Sie können vorerst überspringen."
+  },
+  "home": {
+    "toyTime": "Spielzeit",
+    "letters": "Buchstaben",
+    "animals": "Tiere",
+    "miniGames": "Mini-Spiele",
+    "parentArea": "Elternbereich",
+    "home": "Start"
+  },
+  "game": {
+    "catch": "Fang",
+    "find": "Finde",
+    "pop": "Plopp!",
+    "feedMonster": "Monster füttern!",
+    "catchStar": "Stern fangen!"
+  },
+  "parent": {
+    "title": "Elternbereich",
+    "stars": "Sterne gesammelt",
+    "clipsSaved": "Elternstimmen gespeichert.",
+    "builtIn": "Es werden eingebaute fröhliche Stimmen verwendet.",
+    "mute": "Stumm",
+    "soundOn": "Ton an",
+    "recordVoices": "Stimmen aufnehmen",
+    "reset": "Zurücksetzen",
+    "close": "Schließen"
+  }
+}
