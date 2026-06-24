@@ -60,6 +60,9 @@ struct FloatingToken: Identifiable {
     var x: Double
     var y: Double
     var scale: Double
+    var driftX: Double = 18
+    var driftY: Double = 24
+    var duration: Double = 2.6
     var isWrong = false
 }
 

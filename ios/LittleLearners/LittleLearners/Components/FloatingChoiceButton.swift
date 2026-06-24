@@ -19,8 +19,8 @@ struct FloatingChoiceButton: View {
                 .rotationEffect(.degrees(wrong ? (float ? -7 : 7) : (float ? 4 : -4)))
         }
         .buttonStyle(.plain)
-        .position(x: token.x, y: token.y + (float ? -18 : 12))
-        .animation(.easeInOut(duration: 1.9).repeatForever(autoreverses: true), value: float)
+        .offset(x: float ? token.driftX : -token.driftX, y: float ? -token.driftY : token.driftY)
+        .animation(.easeInOut(duration: token.duration).repeatForever(autoreverses: true), value: float)
         .animation(.default, value: wrong)
         .onAppear { float = true }
         .accessibilityLabel(token.label)

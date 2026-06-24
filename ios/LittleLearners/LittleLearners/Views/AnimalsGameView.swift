@@ -5,23 +5,23 @@ struct AnimalsGameView: View {
     @StateObject private var viewModel = AnimalsGameViewModel()
 
     var body: some View {
-        ZStack {
-            VStack {
-                GameTopBar(title: "Animals")
-                Spacer()
-            }
-            MascotPrompt(mascot: app.isCelebrating ? "🌟" : "🐯", prompt: "Find \(viewModel.target.name)!")
-                .frame(maxHeight: .infinity, alignment: .top)
-                .padding(.top, 86)
-
-            GeometryReader { proxy in
-                ForEach(viewModel.tokens) { token in
-                    FloatingChoiceButton(token: clamp(token, proxy: proxy), wrong: viewModel.wrongTokenID == token.id) {
+        VStack(spacing: 0) {
+            GameTopBar(title: "Animals")
+            ZStack(alignment: .top) {
+                GeometryReader { proxy in
+                    ForEach(Array(viewModel.tokens.enumerated()), id: \.element.id) { index, token in
+                        FloatingChoiceButton(token: token, wrong: viewModel.wrongTokenID == token.id) {
                         viewModel.choose(token, app: app)
                     }
+                        .position(position(for: index, in: proxy.size, itemSize: 146))
+                        .zIndex(token.label == viewModel.target.name ? 1 : 0)
+                    }
                 }
+
+                MascotPrompt(mascot: app.isCelebrating ? "🌟" : "🐯", prompt: "Find \(viewModel.target.name)!")
+                    .padding(.top, 8)
+                    .zIndex(3)
             }
-            .padding(.top, 110)
         }
         .onAppear {
             viewModel.startRound()
@@ -31,10 +31,19 @@ struct AnimalsGameView: View {
         }
     }
 
-    private func clamp(_ token: FloatingToken, proxy: GeometryProxy) -> FloatingToken {
-        var adjusted = token
-        adjusted.x = min(max(token.x, 84), max(proxy.size.width - 84, 84))
-        adjusted.y = min(max(token.y, 190), max(proxy.size.height - 96, 190))
-        return adjusted
+    private func position(for index: Int, in size: CGSize, itemSize: CGFloat) -> CGPoint {
+        let layout: [(CGFloat, CGFloat)] = [
+            (0.20, 0.24),
+            (0.78, 0.28),
+            (0.30, 0.66),
+            (0.72, 0.72)
+        ]
+        let point = layout[index % layout.count]
+        let radius = itemSize / 2
+        let x = radius + 20 + point.0 * max(size.width - (radius * 2) - 40, 1)
+        let safeTop = min(max(size.height * 0.30, 220), max(size.height - radius, radius))
+        let safeBottom = max(safeTop + 1, size.height - radius - 24)
+        let y = safeTop + point.1 * max(safeBottom - safeTop, 1)
+        return CGPoint(x: x, y: y)
     }
 }

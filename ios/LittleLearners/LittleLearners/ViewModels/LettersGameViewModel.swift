@@ -16,9 +16,12 @@ final class LettersGameViewModel: ObservableObject {
             FloatingToken(
                 label: item.symbol,
                 emoji: nil,
-                x: Double((index * 67) % 300) + 30,
-                y: Double((index * 89) % 430) + 110,
-                scale: item.symbol == target.symbol ? 1.12 : 1.0
+                x: 0,
+                y: 0,
+                scale: item.symbol == target.symbol ? 1.12 : 1.0,
+                driftX: Double([16, -18, 22, -14, 18][index % 5]),
+                driftY: Double([22, 18, -20, 24, -18][index % 5]),
+                duration: 2.3 + Double(index) * 0.18
             )
         }
     }

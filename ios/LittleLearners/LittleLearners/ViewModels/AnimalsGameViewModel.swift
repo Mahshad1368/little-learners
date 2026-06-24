@@ -16,9 +16,12 @@ final class AnimalsGameViewModel: ObservableObject {
             FloatingToken(
                 label: item.name,
                 emoji: item.emoji,
-                x: Double((index * 83) % 320) + 24,
-                y: Double((index * 71) % 430) + 120,
-                scale: item.name == target.name ? 1.10 : 1.0
+                x: 0,
+                y: 0,
+                scale: item.name == target.name ? 1.10 : 1.0,
+                driftX: Double([18, -20, 16, -16][index % 4]),
+                driftY: Double([20, 16, -18, 22][index % 4]),
+                duration: 2.5 + Double(index) * 0.2
             )
         }
     }

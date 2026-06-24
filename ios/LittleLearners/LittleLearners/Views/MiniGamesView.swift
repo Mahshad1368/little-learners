@@ -210,11 +210,8 @@ struct GameTopBar: View {
                     .frame(width: 52, height: 52)
                     .background(.white.opacity(0.68), in: Circle())
             }
-            Text(title)
-                .font(.system(.title2, design: .rounded, weight: .black))
-                .foregroundStyle(ToyTheme.ink)
             Spacer()
-            ProgressStars(count: app.starCount)
+            ProgressStars(count: app.starCount, size: 26, font: .subheadline)
             ParentCornerButton()
         }
         .padding(.horizontal, 18)
