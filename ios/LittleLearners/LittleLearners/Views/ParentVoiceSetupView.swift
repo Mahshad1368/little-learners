@@ -9,7 +9,7 @@ struct ParentVoiceSetupView: View {
             VStack(spacing: 22) {
                 header
                 heroCard
-                recordingGrid
+                VoiceSlotCard(viewModel: viewModel, preview: playPreview)
                 bottomActions
             }
             .padding(.horizontal, 22)
@@ -17,6 +17,7 @@ struct ParentVoiceSetupView: View {
             .frame(maxWidth: 920)
             .frame(maxWidth: .infinity)
         }
+        .environment(\.layoutDirection, app.language.isRTL ? .rightToLeft : .leftToRight)
     }
 
     private var header: some View {
@@ -25,26 +26,45 @@ struct ParentVoiceSetupView: View {
                 Text("Little Learners")
                     .font(.system(.title2, design: .rounded, weight: .black))
                     .foregroundStyle(ToyTheme.ink)
-                Text("For parents only")
+                Text(app.language.copy.parentOnly)
                     .font(.system(.caption, design: .rounded, weight: .black))
                     .foregroundStyle(ToyTheme.berry)
                     .textCase(.uppercase)
             }
             Spacer()
-            Text("👪")
-                .font(.system(size: 42))
-                .frame(width: 64, height: 64)
-                .background(.white.opacity(0.75), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+            languageSelector
         }
+    }
+
+    private var languageSelector: some View {
+        Menu {
+            ForEach(AppLanguage.allCases) { language in
+                Button(language.displayName) {
+                    app.language = language
+                }
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "globe")
+                Text(app.language.displayName)
+                    .lineLimit(1)
+            }
+            .font(.system(.headline, design: .rounded, weight: .black))
+            .foregroundStyle(ToyTheme.ink)
+            .padding(.horizontal, 14)
+            .frame(minHeight: 52)
+            .background(.white.opacity(0.78), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        }
+        .accessibilityLabel(app.language.copy.language)
     }
 
     private var heroCard: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Parent Voice Setup")
+            Text(app.language.copy.setupTitle)
                 .font(.system(size: 42, weight: .black, design: .rounded))
                 .foregroundStyle(ToyTheme.ink)
                 .minimumScaleFactor(0.72)
-            Text("Record your voice before your child starts playing, so they hear familiar encouragement during the game.")
+            Text(app.language.copy.setupSubtitle)
                 .font(.system(.title3, design: .rounded, weight: .bold))
                 .foregroundStyle(ToyTheme.ink.opacity(0.72))
                 .fixedSize(horizontal: false, vertical: true)
@@ -53,9 +73,9 @@ struct ParentVoiceSetupView: View {
                 Text("🔒")
                     .font(.title)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("For Parents Only")
+                    Text(app.language.copy.parentOnly)
                         .font(.system(.title3, design: .rounded, weight: .black))
-                    Text("Your recorded voice is saved only on this device and used inside the game to encourage your child.")
+                    Text(app.language.copy.noticeBody)
                         .font(.system(.body, design: .rounded, weight: .semibold))
                         .foregroundStyle(ToyTheme.ink.opacity(0.68))
                 }
@@ -66,25 +86,6 @@ struct ParentVoiceSetupView: View {
         .padding(24)
         .background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 34, style: .continuous))
         .shadow(color: ToyTheme.ink.opacity(0.12), radius: 24, x: 0, y: 16)
-    }
-
-    private var recordingGrid: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 280), spacing: 16)], spacing: 16) {
-            VoiceSlotCard(
-                title: "Encouragement voice",
-                prompt: "Try: Yay! Great job!",
-                kind: .encouragement,
-                viewModel: viewModel,
-                preview: playPreview
-            )
-            VoiceSlotCard(
-                title: "Instruction voice",
-                prompt: "Try: Catch or Find",
-                kind: .instruction,
-                viewModel: viewModel,
-                preview: playPreview
-            )
-        }
     }
 
     private var bottomActions: some View {
@@ -101,7 +102,7 @@ struct ParentVoiceSetupView: View {
             Button {
                 app.completeSetup(with: viewModel.clips)
             } label: {
-                Text("Continue")
+                Text(app.language.copy.continueButton)
                     .font(.system(.title3, design: .rounded, weight: .black))
                     .frame(maxWidth: .infinity, minHeight: 62)
                     .background(canContinue ? ToyTheme.leaf : Color.gray.opacity(0.28), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
@@ -109,7 +110,7 @@ struct ParentVoiceSetupView: View {
             }
             .disabled(!canContinue)
 
-            Button("Skip for now") {
+            Button(app.language.copy.skipForNow) {
                 app.skipSetup()
             }
             .font(.system(.headline, design: .rounded, weight: .black))
@@ -119,7 +120,7 @@ struct ParentVoiceSetupView: View {
     }
 
     private var canContinue: Bool {
-        viewModel.hasClip(.encouragement) && viewModel.hasClip(.instruction)
+        viewModel.hasClip(.encouragement)
     }
 
     private func playPreview(_ clip: VoiceClip) {
@@ -131,11 +132,10 @@ struct ParentVoiceSetupView: View {
 }
 
 private struct VoiceSlotCard: View {
-    let title: String
-    let prompt: String
-    let kind: VoiceClipKind
+    @EnvironmentObject private var app: AppViewModel
     @ObservedObject var viewModel: ParentVoiceSetupViewModel
     let preview: (VoiceClip) -> Void
+    private let kind: VoiceClipKind = .encouragement
 
     var body: some View {
         VStack(spacing: 16) {
@@ -145,12 +145,9 @@ private struct VoiceSlotCard: View {
                 .background(ToyTheme.berry.opacity(0.14), in: RoundedRectangle(cornerRadius: 32, style: .continuous))
 
             VStack(spacing: 6) {
-                Text(title)
+                Text(app.language.copy.micLabel)
                     .font(.system(.title3, design: .rounded, weight: .black))
                     .foregroundStyle(ToyTheme.ink)
-                Text(prompt)
-                    .font(.system(.callout, design: .rounded, weight: .bold))
-                    .foregroundStyle(ToyTheme.ink.opacity(0.62))
             }
 
             Text(format(viewModel.activeKind == kind ? viewModel.duration : 0))
@@ -161,18 +158,18 @@ private struct VoiceSlotCard: View {
                 .background(.white.opacity(0.8), in: Capsule())
 
             if viewModel.activeKind == kind && viewModel.isRecording {
-                Button("Stop Recording") {
+                Button(app.language.copy.stopRecording) {
                     viewModel.stop()
                 }
                 .primaryToyButton(color: .red)
             } else {
-                Button(viewModel.hasClip(kind) ? "Record Again" : "Start Recording") {
+                Button(viewModel.hasClip(kind) ? app.language.copy.recordAgain : app.language.copy.startRecording) {
                     viewModel.hasClip(kind) ? viewModel.recordAgain(kind: kind) : viewModel.start(kind: kind)
                 }
                 .primaryToyButton(color: ToyTheme.berry)
             }
 
-            Button("Play Preview") {
+            Button(app.language.copy.playPreview) {
                 if let clip = viewModel.clip(for: kind) {
                     preview(clip)
                 }
@@ -184,6 +181,7 @@ private struct VoiceSlotCard: View {
         .padding(22)
         .background(.white.opacity(0.86), in: RoundedRectangle(cornerRadius: 32, style: .continuous))
         .shadow(color: ToyTheme.ink.opacity(0.12), radius: 18, x: 0, y: 12)
+        .environment(\.layoutDirection, app.language.isRTL ? .rightToLeft : .leftToRight)
     }
 
     private func format(_ duration: TimeInterval) -> String {

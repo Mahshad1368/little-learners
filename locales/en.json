@@ -11,7 +11,7 @@
     "subheadline": "Record your voice so your child can hear familiar encouragement during the game.",
     "noticeTitle": "For Parents Only",
     "noticeBody": "Your recorded voice will be used inside the game to encourage your child.",
-    "micLabel": "Your voice makes the game feel familiar.",
+    "micLabel": "One short, happy recording is enough.",
     "startRecording": "Start Recording",
     "recording": "Recording...",
     "stopRecording": "Stop recording",
@@ -20,10 +20,6 @@
     "continue": "Continue",
     "skip": "Skip for now",
     "duration": "Duration",
-    "instructionTitle": "Instruction voice",
-    "instructionPrompt": "Try saying: Catch or Find",
-    "encouragementTitle": "Encouragement voice",
-    "encouragementPrompt": "Try saying: Yay! Great job!",
     "permissionError": "Microphone permission was not granted. You can skip for now.",
     "unsupportedError": "Recording is not available in this browser. You can skip for now."
   },
@@ -45,7 +41,7 @@
   "parent": {
     "title": "Parent area",
     "stars": "stars earned",
-    "clipsSaved": "parent voice clips saved.",
+    "clipsSaved": "Parent voice saved.",
     "builtIn": "Using built-in happy voices.",
     "mute": "Mute",
     "soundOn": "Sound on",

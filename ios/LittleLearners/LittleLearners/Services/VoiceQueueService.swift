@@ -35,15 +35,11 @@ final class VoiceQueueService: NSObject, AVSpeechSynthesizerDelegate {
         }
     }
 
-    func playInstruction(parentClip: VoiceClip?, action: String, target: String) async {
+    func playInstruction(action: String, target: String, language: AppLanguage) async {
         guard !isMuted else { return }
         await enqueue {
-            if let parentClip {
-                await self.audioPlayer.play(url: parentClip.url, volume: 1.0)
-            } else {
-                await self.speak(action, priority: .instruction)
-            }
-            await self.speak(target, priority: .target)
+            await self.speak(action, priority: .instruction, language: language)
+            await self.speak(target, priority: .target, language: language)
         }
     }
 
@@ -57,10 +53,10 @@ final class VoiceQueueService: NSObject, AVSpeechSynthesizerDelegate {
         voiceTask = nil
     }
 
-    private func speak(_ text: String, priority: VoicePriority) async {
+    private func speak(_ text: String, priority: VoicePriority, language: AppLanguage = .en) async {
         guard !text.isEmpty else { return }
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.voice = AVSpeechSynthesisVoice(language: language.speechCode) ?? AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = priority.rate
         utterance.pitchMultiplier = priority.pitch
         utterance.volume = 1.0

@@ -17,6 +17,11 @@ final class AppViewModel: ObservableObject {
             saveVoiceClips()
         }
     }
+    @Published var language: AppLanguage {
+        didSet {
+            defaults.set(language.rawValue, forKey: PersistenceKeys.language)
+        }
+    }
     @Published var showParentPanel = false
     @Published var celebrationID = UUID()
     @Published var isCelebrating = false
@@ -32,6 +37,7 @@ final class AppViewModel: ObservableObject {
         starCount = defaults.integer(forKey: PersistenceKeys.starCount)
         isMuted = defaults.bool(forKey: PersistenceKeys.muted)
         voiceClips = Self.loadVoiceClips()
+        language = AppLanguage(rawValue: defaults.string(forKey: PersistenceKeys.language) ?? "") ?? .en
         soundEffects.isMuted = isMuted
         voiceQueue.isMuted = isMuted
     }
@@ -40,12 +46,8 @@ final class AppViewModel: ObservableObject {
         voiceClips.first { $0.kind == .encouragement }
     }
 
-    var instructionClip: VoiceClip? {
-        voiceClips.first { $0.kind == .instruction }
-    }
-
     func completeSetup(with clips: [VoiceClip]) {
-        voiceClips = clips
+        voiceClips = clips.filter { $0.kind == .encouragement }
         defaults.set(true, forKey: PersistenceKeys.setupComplete)
         screen = .home
     }
@@ -108,6 +110,6 @@ final class AppViewModel: ObservableObject {
               let clips = try? JSONDecoder().decode([VoiceClip].self, from: data) else {
             return []
         }
-        return clips.filter { FileManager.default.fileExists(atPath: $0.url.path) }
+        return clips.filter { $0.kind == .encouragement && FileManager.default.fileExists(atPath: $0.url.path) }
     }
 }

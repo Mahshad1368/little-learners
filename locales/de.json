@@ -11,7 +11,7 @@
     "subheadline": "Nehmen Sie Ihre Stimme auf, damit Ihr Kind während des Spiels vertraute Ermutigungen hört.",
     "noticeTitle": "Nur für Eltern",
     "noticeBody": "Ihre aufgenommene Stimme wird im Spiel verwendet, um Ihr Kind zu ermutigen.",
-    "micLabel": "Ihre Stimme macht das Spiel vertraut.",
+    "micLabel": "Eine kurze, fröhliche Aufnahme reicht.",
     "startRecording": "Aufnahme starten",
     "recording": "Aufnahme läuft...",
     "stopRecording": "Aufnahme stoppen",
@@ -20,10 +20,6 @@
     "continue": "Weiter",
     "skip": "Jetzt überspringen",
     "duration": "Dauer",
-    "instructionTitle": "Anweisungsstimme",
-    "instructionPrompt": "Sagen Sie zum Beispiel: Fang oder Finde",
-    "encouragementTitle": "Ermutigungsstimme",
-    "encouragementPrompt": "Sagen Sie zum Beispiel: Yay! Gut gemacht!",
     "permissionError": "Die Mikrofonberechtigung wurde nicht erteilt. Sie können vorerst überspringen.",
     "unsupportedError": "Aufnahme ist in diesem Browser nicht verfügbar. Sie können vorerst überspringen."
   },
@@ -45,7 +41,7 @@
   "parent": {
     "title": "Elternbereich",
     "stars": "Sterne gesammelt",
-    "clipsSaved": "Elternstimmen gespeichert.",
+    "clipsSaved": "Elternstimme gespeichert.",
     "builtIn": "Es werden eingebaute fröhliche Stimmen verwendet.",
     "mute": "Stumm",
     "soundOn": "Ton an",

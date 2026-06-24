@@ -15,6 +15,117 @@ enum VoiceClipKind: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+enum AppLanguage: String, CaseIterable, Identifiable {
+    case en
+    case de
+    case fa
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .en:
+            return "English"
+        case .de:
+            return "Deutsch"
+        case .fa:
+            return "فارسی"
+        }
+    }
+
+    var speechCode: String {
+        switch self {
+        case .en:
+            return "en-US"
+        case .de:
+            return "de-DE"
+        case .fa:
+            return "fa-IR"
+        }
+    }
+
+    var isRTL: Bool { self == .fa }
+}
+
+struct LocalizedCopy {
+    let parentOnly: String
+    let setupTitle: String
+    let setupSubtitle: String
+    let noticeBody: String
+    let micLabel: String
+    let startRecording: String
+    let stopRecording: String
+    let playPreview: String
+    let recordAgain: String
+    let continueButton: String
+    let skipForNow: String
+    let duration: String
+    let language: String
+    let catchWord: String
+    let findWord: String
+}
+
+extension AppLanguage {
+    var copy: LocalizedCopy {
+        switch self {
+        case .en:
+            return LocalizedCopy(
+                parentOnly: "For Parents Only",
+                setupTitle: "Parent Voice Setup",
+                setupSubtitle: "Record your voice so your child can hear familiar encouragement during the game.",
+                noticeBody: "Your recorded voice is saved only on this device and used inside the game to encourage your child.",
+                micLabel: "One short, happy recording is enough.",
+                startRecording: "Start Recording",
+                stopRecording: "Stop Recording",
+                playPreview: "Play Preview",
+                recordAgain: "Record Again",
+                continueButton: "Continue",
+                skipForNow: "Skip for now",
+                duration: "Duration",
+                language: "Language",
+                catchWord: "Catch",
+                findWord: "Find"
+            )
+        case .de:
+            return LocalizedCopy(
+                parentOnly: "Nur für Eltern",
+                setupTitle: "Stimme der Eltern einrichten",
+                setupSubtitle: "Nehmen Sie Ihre Stimme auf, damit Ihr Kind während des Spiels vertraute Ermutigungen hört.",
+                noticeBody: "Ihre Aufnahme bleibt nur auf diesem Gerät und wird im Spiel zur Ermutigung Ihres Kindes verwendet.",
+                micLabel: "Eine kurze, fröhliche Aufnahme reicht.",
+                startRecording: "Aufnahme starten",
+                stopRecording: "Aufnahme stoppen",
+                playPreview: "Vorschau anhören",
+                recordAgain: "Erneut aufnehmen",
+                continueButton: "Weiter",
+                skipForNow: "Jetzt überspringen",
+                duration: "Dauer",
+                language: "Sprache",
+                catchWord: "Fang",
+                findWord: "Finde"
+            )
+        case .fa:
+            return LocalizedCopy(
+                parentOnly: "فقط برای والدین",
+                setupTitle: "تنظیم صدای والدین",
+                setupSubtitle: "صدای خود را ضبط کنید تا کودک شما هنگام بازی صدایی آشنا و دلگرم‌کننده بشنود.",
+                noticeBody: "صدای ضبط‌شده فقط روی همین دستگاه ذخیره می‌شود و برای تشویق کودک در بازی استفاده می‌شود.",
+                micLabel: "یک ضبط کوتاه و شاد کافی است.",
+                startRecording: "شروع ضبط",
+                stopRecording: "توقف ضبط",
+                playPreview: "پخش نمونه",
+                recordAgain: "ضبط مجدد",
+                continueButton: "ادامه",
+                skipForNow: "فعلا رد کن",
+                duration: "مدت زمان",
+                language: "زبان",
+                catchWord: "بگیر",
+                findWord: "پیدا کن"
+            )
+        }
+    }
+}
+
 struct VoiceClip: Codable, Equatable, Identifiable {
     let id: UUID
     let kind: VoiceClipKind

@@ -19,9 +19,9 @@ final class LettersGameViewModel: ObservableObject {
                 x: 0,
                 y: 0,
                 scale: item.symbol == target.symbol ? 1.12 : 1.0,
-                driftX: Double([16, -18, 22, -14, 18][index % 5]),
-                driftY: Double([22, 18, -20, 24, -18][index % 5]),
-                duration: 2.3 + Double(index) * 0.18
+                driftX: Double([34, -38, 42, -32, 36][index % 5]),
+                driftY: Double([42, 34, -38, 46, -36][index % 5]),
+                duration: 3.0 + Double(index) * 0.22
             )
         }
     }
@@ -43,7 +43,7 @@ final class LettersGameViewModel: ObservableObject {
             await app.reward {
                 self.round += 1
                 self.startRound()
-                await app.voiceQueue.playInstruction(parentClip: app.instructionClip, action: "Catch", target: self.target.symbol)
+                await app.voiceQueue.playInstruction(action: app.language.copy.catchWord, target: self.target.symbol, language: app.language)
             }
         }
     }

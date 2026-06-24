@@ -11,14 +11,14 @@ struct AnimalsGameView: View {
                 GeometryReader { proxy in
                     ForEach(Array(viewModel.tokens.enumerated()), id: \.element.id) { index, token in
                         FloatingChoiceButton(token: token, wrong: viewModel.wrongTokenID == token.id) {
-                        viewModel.choose(token, app: app)
-                    }
+                            viewModel.choose(token, app: app)
+                        }
                         .position(position(for: index, in: proxy.size, itemSize: 146))
                         .zIndex(token.label == viewModel.target.name ? 1 : 0)
                     }
                 }
 
-                MascotPrompt(mascot: app.isCelebrating ? "🌟" : "🐯", prompt: "Find \(viewModel.target.name)!")
+                MascotPrompt(mascot: app.isCelebrating ? "🌟" : "🐯", prompt: "\(app.language.copy.findWord) \(viewModel.target.name)!")
                     .padding(.top, 8)
                     .zIndex(3)
             }
@@ -26,7 +26,7 @@ struct AnimalsGameView: View {
         .onAppear {
             viewModel.startRound()
             Task {
-                await app.voiceQueue.playInstruction(parentClip: app.instructionClip, action: "Find", target: viewModel.target.name)
+                await app.voiceQueue.playInstruction(action: app.language.copy.findWord, target: viewModel.target.name, language: app.language)
             }
         }
     }

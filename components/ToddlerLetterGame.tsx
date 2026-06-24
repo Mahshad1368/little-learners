@@ -11,7 +11,7 @@ import { useVoiceQueue } from "@/utils/useVoiceQueue";
 type Mode = "home" | "letters" | "animals" | "minis";
 type MiniGameId = (typeof miniGames)[number]["id"];
 type ToddlerAnimal = (typeof toddlerAnimals)[number];
-type VoiceClipKind = "encouragement" | "instruction";
+type VoiceClipKind = "encouragement";
 type RecordedVoiceClip = {
   id: string;
   label: string;
@@ -27,7 +27,7 @@ type GameFeedback = {
 };
 
 const SETUP_KEY = "little-learners-parent-setup-complete";
-const SETUP_VERSION = "3";
+const SETUP_VERSION = "4";
 const VOICE_KEY = "little-learners-parent-voice-clips";
 const STARS_KEY = "little-learners-toy-stars";
 const MUTE_KEY = "little-learners-muted";
@@ -80,7 +80,6 @@ export function ToddlerLetterGame() {
   const starSlots = Array.from({ length: 8 }, (_, index) => index < Math.min(stars, 8));
   const cheer = cheers[(round + stars) % cheers.length];
   const encouragementClips = voiceClips.filter((clip) => clip.kind === "encouragement");
-  const instructionClip = voiceClips.find((clip) => clip.kind === "instruction") ?? null;
 
   const floatingLetters = useMemo(() => {
     const start = round % toddlerLetters.length;
@@ -148,11 +147,6 @@ export function ToddlerLetterGame() {
 
   async function playInstruction(action: string, target: string) {
     if (muted) {
-      return;
-    }
-
-    if (instructionClip) {
-      await voiceQueue.playInstruction(instructionClip.dataUrl, target);
       return;
     }
 
@@ -250,8 +244,9 @@ export function ToddlerLetterGame() {
   }
 
   function completeSetup(clips: RecordedVoiceClip[]) {
-    setVoiceClips(clips);
-    window.localStorage.setItem(VOICE_KEY, JSON.stringify(clips));
+    const parentVoiceClips = clips.filter((clip) => clip.kind === "encouragement");
+    setVoiceClips(parentVoiceClips);
+    window.localStorage.setItem(VOICE_KEY, JSON.stringify(parentVoiceClips));
     window.localStorage.setItem(SETUP_KEY, SETUP_VERSION);
     setSetupComplete(true);
   }
@@ -298,7 +293,7 @@ export function ToddlerLetterGame() {
         onToggle={() => setParentOpen((open) => !open)}
         stars={stars}
         muted={muted}
-        voiceClipCount={voiceClips.length}
+        voiceClipCount={voiceClips.filter((clip) => clip.kind === "encouragement").length}
         onReset={resetStars}
         onToggleMute={() => setMuted((current) => !current)}
         onRedoSetup={() => {
@@ -668,6 +663,15 @@ function HomeToy({ onChoose, mascotHappy, t }: { onChoose: (mode: Mode) => void;
 }
 
 function LettersMode({ target, letters, wrongChoice, celebrating, onPick, t }: { target: string; letters: readonly string[]; wrongChoice: string | null; celebrating: boolean; onPick: (letter: string) => void; t: Translate }) {
+  const letterColors = [
+    "bg-white/72 text-ink dark:bg-white/12 dark:text-white",
+    "bg-mint/65 text-ink",
+    "bg-sky/55 text-ink",
+    "bg-leaf/55 text-ink",
+    "bg-white/72 text-plum dark:bg-white/12",
+    "bg-banana/50 text-ink"
+  ];
+
   return (
     <motion.div className="relative z-10 h-[calc(100svh-10rem)] min-h-[34rem]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <MascotPrompt mascot={celebrating ? mascotFaces.sparkle : mascotFaces.happy} prompt={`${t("game.catch")} ${target}!`} celebrating={celebrating} />
@@ -680,7 +684,7 @@ function LettersMode({ target, letters, wrongChoice, celebrating, onPick, t }: {
             aria-label={`${t("game.catch")} ${letter}`}
             className={cn(
               "absolute grid h-28 w-28 place-items-center rounded-full text-6xl font-black shadow-lift backdrop-blur sm:h-36 sm:w-36 sm:text-8xl",
-              isTarget ? "bg-banana/90 text-berry ring-8 ring-banana/45" : "bg-white/65 text-ink dark:text-white",
+              isTarget ? "z-10 bg-banana/95 text-berry ring-8 ring-banana/45" : letterColors[index % letterColors.length],
               wrongChoice === letter && "z-20 bg-red-400 text-white ring-8 ring-red-200"
             )}
             initial={{ x: path.x[0], y: path.y[0] }}
@@ -709,6 +713,8 @@ function LettersMode({ target, letters, wrongChoice, celebrating, onPick, t }: {
 }
 
 function AnimalsMode({ target, animals, wrongChoice, celebrating, onPick, t }: { target: string; animals: readonly ToddlerAnimal[]; wrongChoice: string | null; celebrating: boolean; onPick: (name: string, sound: string) => void; t: Translate }) {
+  const animalColors = ["bg-white/72", "bg-mint/60", "bg-sky/50", "bg-leaf/50", "bg-banana/45", "bg-white/72"];
+
   return (
     <motion.div className="relative z-10 h-[calc(100svh-10rem)] min-h-[34rem]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <MascotPrompt mascot={celebrating ? mascotFaces.sparkle : "🐯"} prompt={`${t("game.find")} ${target}!`} celebrating={celebrating} />
@@ -721,7 +727,7 @@ function AnimalsMode({ target, animals, wrongChoice, celebrating, onPick, t }: {
             aria-label={`${t("game.find")} ${animal.name}`}
             className={cn(
               "absolute grid h-28 w-28 place-items-center rounded-[2.25rem] text-7xl shadow-lift backdrop-blur sm:h-40 sm:w-40 sm:text-8xl",
-              isTarget ? "bg-banana/90 ring-8 ring-banana/45" : "bg-white/70",
+              isTarget ? "z-10 bg-banana/95 ring-8 ring-banana/45" : animalColors[index % animalColors.length],
               wrongChoice === animal.name && "z-20 bg-red-400 ring-8 ring-red-200"
             )}
             initial={{ x: path.x[0], y: path.y[0] }}
@@ -914,7 +920,7 @@ function ParentPanel({
           <p className="text-sm font-black uppercase tracking-[0.16em] text-berry">{t("parent.title")}</p>
           <p className="mt-2 text-lg font-black text-ink dark:text-white">{stars} {t("parent.stars")}</p>
           <p className="mt-1 text-sm font-bold text-slate-600 dark:text-slate-300">
-            {voiceClipCount > 0 ? `${voiceClipCount} ${t("parent.clipsSaved")}` : t("parent.builtIn")}
+            {voiceClipCount > 0 ? t("parent.clipsSaved") : t("parent.builtIn")}
           </p>
           <div className="mt-4 grid gap-2">
             <button className="rounded-full bg-banana px-5 py-3 text-sm font-black text-ink" onClick={onToggleMute} type="button">

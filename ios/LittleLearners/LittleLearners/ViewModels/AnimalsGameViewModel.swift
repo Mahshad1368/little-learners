@@ -19,9 +19,9 @@ final class AnimalsGameViewModel: ObservableObject {
                 x: 0,
                 y: 0,
                 scale: item.name == target.name ? 1.10 : 1.0,
-                driftX: Double([18, -20, 16, -16][index % 4]),
-                driftY: Double([20, 16, -18, 22][index % 4]),
-                duration: 2.5 + Double(index) * 0.2
+                driftX: Double([34, -40, 32, -36][index % 4]),
+                driftY: Double([38, 32, -34, 42][index % 4]),
+                duration: 3.2 + Double(index) * 0.22
             )
         }
     }
@@ -43,7 +43,7 @@ final class AnimalsGameViewModel: ObservableObject {
             await app.reward {
                 self.round += 1
                 self.startRound()
-                await app.voiceQueue.playInstruction(parentClip: app.instructionClip, action: "Find", target: self.target.name)
+                await app.voiceQueue.playInstruction(action: app.language.copy.findWord, target: self.target.name, language: app.language)
             }
         }
     }

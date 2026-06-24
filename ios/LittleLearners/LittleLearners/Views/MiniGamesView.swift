@@ -121,7 +121,7 @@ private struct FishingLettersGame: View {
 
     var body: some View {
         GeometryReader { proxy in
-            MascotPrompt(mascot: "🎣", prompt: "Catch \(viewModel.targetLetter.symbol)!", compact: true)
+            MascotPrompt(mascot: "🎣", prompt: "\(app.language.copy.catchWord) \(viewModel.targetLetter.symbol)!", compact: true)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 20)
 

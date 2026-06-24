@@ -11,14 +11,14 @@ struct LettersGameView: View {
                 GeometryReader { proxy in
                     ForEach(Array(viewModel.tokens.enumerated()), id: \.element.id) { index, token in
                         FloatingChoiceButton(token: token, wrong: viewModel.wrongTokenID == token.id) {
-                        viewModel.choose(token, app: app)
-                    }
+                            viewModel.choose(token, app: app)
+                        }
                         .position(position(for: index, in: proxy.size, itemSize: 132))
                         .zIndex(token.label == viewModel.target.symbol ? 1 : 0)
                     }
                 }
 
-                MascotPrompt(mascot: app.isCelebrating ? "🤩" : "😊", prompt: "Catch \(viewModel.target.symbol)!")
+                MascotPrompt(mascot: app.isCelebrating ? "🤩" : "😊", prompt: "\(app.language.copy.catchWord) \(viewModel.target.symbol)!")
                     .padding(.top, 8)
                     .zIndex(3)
             }
@@ -26,7 +26,7 @@ struct LettersGameView: View {
         .onAppear {
             viewModel.startRound()
             Task {
-                await app.voiceQueue.playInstruction(parentClip: app.instructionClip, action: "Catch", target: viewModel.target.symbol)
+                await app.voiceQueue.playInstruction(action: app.language.copy.catchWord, target: viewModel.target.symbol, language: app.language)
             }
         }
     }

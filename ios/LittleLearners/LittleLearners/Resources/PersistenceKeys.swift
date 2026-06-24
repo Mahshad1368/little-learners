@@ -5,4 +5,5 @@ enum PersistenceKeys {
     static let starCount = "littleLearners.starCount"
     static let muted = "littleLearners.muted"
     static let voiceClips = "littleLearners.voiceClips"
+    static let language = "littleLearners.language"
 }
