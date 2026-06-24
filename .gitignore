@@ -13,6 +13,7 @@ coverage
 *.tsbuildinfo
 DerivedData
 ios/DerivedData
+ios/DeviceDerivedData
 *.xcuserstate
 xcuserdata
 build

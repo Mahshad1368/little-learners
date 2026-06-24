@@ -36,7 +36,6 @@
 		1A0A00042C00000100000004 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1A0A00052C00000100000005 /* LittleLearners.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -63,7 +62,6 @@
 			packageProductDependencies = (
 			);
 			productName = LittleLearners;
-			productReference = 1A0A00052C00000100000005 /* LittleLearners.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -246,7 +244,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 5UAB2YDZ59;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Little Learners";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Little Learners records a parent voice so children can hear familiar encouragement.";
@@ -274,7 +272,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 5UAB2YDZ59;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Little Learners";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Little Learners records a parent voice so children can hear familiar encouragement.";
@@ -299,20 +297,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1A0A000B2C0000010000000B /* Build configuration list for PBXProject "LittleLearners" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1A0A000C2C0000010000000C /* Debug */,
-				1A0A000D2C0000010000000D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		1A0A00072C00000100000007 /* Build configuration list for PBXNativeTarget "LittleLearners" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1A0A000E2C0000010000000E /* Debug */,
 				1A0A000F2C0000010000000F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A0A000B2C0000010000000B /* Build configuration list for PBXProject "LittleLearners" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A0A000C2C0000010000000C /* Debug */,
+				1A0A000D2C0000010000000D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
