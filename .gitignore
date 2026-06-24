@@ -11,3 +11,8 @@ yarn-error.log*
 .DS_Store
 coverage
 *.tsbuildinfo
+DerivedData
+ios/DerivedData
+*.xcuserstate
+xcuserdata
+build
