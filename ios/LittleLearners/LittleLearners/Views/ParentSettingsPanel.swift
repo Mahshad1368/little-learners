@@ -15,6 +15,9 @@ struct ParentSettingsPanel: View {
                 .font(.system(.callout, design: .rounded, weight: .bold))
                 .foregroundStyle(ToyTheme.ink.opacity(0.62))
 
+            languagePicker
+                .padding(.vertical, 4)
+
             Button(app.isMuted ? "Sound On" : "Mute") {
                 app.isMuted.toggle()
             }
@@ -43,6 +46,30 @@ struct ParentSettingsPanel: View {
         .shadow(color: ToyTheme.ink.opacity(0.22), radius: 26, x: 0, y: 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         .padding(20)
+        .environment(\.layoutDirection, app.language.isRTL ? .rightToLeft : .leftToRight)
+    }
+
+    private var languagePicker: some View {
+        VStack(alignment: app.language.isRTL ? .trailing : .leading, spacing: 8) {
+            Text(app.language.copy.language)
+                .font(.system(.caption, design: .rounded, weight: .black))
+                .foregroundStyle(ToyTheme.berry)
+
+            HStack(spacing: 8) {
+                ForEach(AppLanguage.allCases) { language in
+                    Button {
+                        app.language = language
+                    } label: {
+                        Text(language.displayName)
+                            .font(.system(.callout, design: .rounded, weight: .black))
+                            .foregroundStyle(app.language == language ? ToyTheme.ink : ToyTheme.ink.opacity(0.70))
+                            .frame(maxWidth: .infinity, minHeight: 46)
+                            .background(app.language == language ? ToyTheme.banana : .white.opacity(0.68), in: Capsule())
+                    }
+                    .accessibilityLabel(language.displayName)
+                }
+            }
+        }
     }
 }
 

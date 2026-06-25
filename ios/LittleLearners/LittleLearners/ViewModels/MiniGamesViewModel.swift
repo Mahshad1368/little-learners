@@ -4,7 +4,6 @@ import Foundation
 final class MiniGamesViewModel: ObservableObject {
     @Published var activeGame: MiniGameKind = .bubblePop
     @Published var targetLetterIndex = 0
-    @Published var fedCount = 0
     @Published var wrongLetter: String?
 
     var targetLetter: LetterItem {
@@ -13,7 +12,6 @@ final class MiniGamesViewModel: ObservableObject {
 
     func select(_ game: MiniGameKind) {
         activeGame = game
-        fedCount = 0
         wrongLetter = nil
     }
 

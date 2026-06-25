@@ -12,8 +12,6 @@ struct MiniGamesView: View {
                 switch viewModel.activeGame {
                 case .bubblePop:
                     BubblePopGame(app: app, viewModel: viewModel)
-                case .feedMonster:
-                    FeedMonsterGame(app: app, viewModel: viewModel)
                 case .fishingLetters:
                     DragLettersGame(app: app, viewModel: viewModel)
                 case .catchStar:
@@ -58,6 +56,7 @@ private struct BubblePopGame: View {
     @State private var popped: Set<Int> = []
     @State private var wrongBubble: Int?
     @State private var float = false
+    @State private var layoutIndex = 0
 
     var body: some View {
         GeometryReader { proxy in
@@ -83,12 +82,12 @@ private struct BubblePopGame: View {
                     )
                     .rotationEffect(.degrees(wrongBubble == index ? (float ? -7 : 7) : 0))
                     .animation(.easeInOut(duration: wrongBubble == index ? 0.18 : 2.8 + Double(index) * 0.16).repeatForever(autoreverses: true), value: float)
-                    .position(x: bubbleX(index, proxy.size.width), y: bubbleY(index, proxy.size.height))
+                    .position(bubblePosition(index, proxy.size))
                     .accessibilityLabel("Pop bubble")
                 } else {
                     Text("🌸✨")
                         .font(.system(size: 46))
-                        .position(x: bubbleX(index, proxy.size.width), y: bubbleY(index, proxy.size.height))
+                        .position(bubblePosition(index, proxy.size))
                         .transition(.scale.combined(with: .opacity))
                 }
             }
@@ -112,50 +111,20 @@ private struct BubblePopGame: View {
         if popped.count >= 6 {
             Task {
                 try? await Task.sleep(for: .milliseconds(900))
+                layoutIndex += 1
                 popped.removeAll()
             }
         }
     }
 
-    private func bubbleX(_ index: Int, _ width: CGFloat) -> CGFloat {
-        CGFloat((index * 71) % Int(max(width - 120, 1))) + 60
-    }
-
-    private func bubbleY(_ index: Int, _ height: CGFloat) -> CGFloat {
-        CGFloat((index * 97) % Int(max(height - 180, 1))) + 130
-    }
-}
-
-private struct FeedMonsterGame: View {
-    let app: AppViewModel
-    @ObservedObject var viewModel: MiniGamesViewModel
-    private let foods = ["🍓", "🍌", "🫐"]
-
-    var body: some View {
-        VStack(spacing: 28) {
-            Spacer()
-            Text(viewModel.fedCount.isMultiple(of: 2) ? "👾" : "😋")
-                .font(.system(size: 128))
-                .frame(width: 190, height: 190)
-                .background(ToyTheme.lavender, in: RoundedRectangle(cornerRadius: 38, style: .continuous))
-                .shadow(color: ToyTheme.ink.opacity(0.18), radius: 18, x: 0, y: 10)
-            HStack(spacing: 12) {
-                ForEach(foods, id: \.self) { food in
-                    Button {
-                        viewModel.fedCount += 1
-                        viewModel.reward(app: app)
-                    } label: {
-                        Text(food)
-                            .font(.system(size: 54))
-                            .frame(maxWidth: .infinity, minHeight: 104)
-                            .background(.white.opacity(0.68), in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-                    }
-                    .accessibilityLabel("Feed the monster")
-                }
-            }
-            Spacer()
-        }
-        .padding(20)
+    private func bubblePosition(_ index: Int, _ size: CGSize) -> CGPoint {
+        let layouts: [[(CGFloat, CGFloat)]] = [
+            [(0.12, 0.22), (0.66, 0.18), (0.30, 0.40), (0.78, 0.50), (0.16, 0.66), (0.52, 0.72), (0.84, 0.28), (0.38, 0.82)],
+            [(0.58, 0.22), (0.18, 0.30), (0.76, 0.42), (0.34, 0.58), (0.68, 0.74), (0.12, 0.76), (0.46, 0.36), (0.84, 0.66)],
+            [(0.20, 0.46), (0.52, 0.24), (0.80, 0.60), (0.34, 0.74), (0.68, 0.40), (0.12, 0.24), (0.48, 0.66), (0.78, 0.30)]
+        ]
+        let point = layouts[layoutIndex % layouts.count][index % layouts[layoutIndex % layouts.count].count]
+        return CGPoint(x: 60 + point.0 * max(size.width - 120, 1), y: 130 + point.1 * max(size.height - 210, 1))
     }
 }
 

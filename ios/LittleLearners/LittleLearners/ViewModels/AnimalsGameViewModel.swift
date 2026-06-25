@@ -43,7 +43,7 @@ final class AnimalsGameViewModel: ObservableObject {
             await app.reward {
                 self.round += 1
                 self.startRound()
-                await app.voiceQueue.playInstruction(action: app.language.copy.findWord, target: self.target.name, language: app.language)
+                await app.voiceQueue.playAnimalInstruction(action: app.language.copy.findWord, animal: self.target, language: app.language)
             }
         }
     }

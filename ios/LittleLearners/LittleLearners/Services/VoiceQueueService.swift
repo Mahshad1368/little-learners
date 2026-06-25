@@ -43,6 +43,15 @@ final class VoiceQueueService: NSObject, AVSpeechSynthesizerDelegate {
         }
     }
 
+    func playAnimalInstruction(action: String, animal: AnimalItem, language: AppLanguage) async {
+        guard !isMuted else { return }
+        await enqueue {
+            await self.speak(action, priority: .instruction, language: language)
+            await self.speak(animal.name, priority: .target, language: language)
+            await self.speak(animal.soundPrompt, priority: .target, language: .en)
+        }
+    }
+
     private func enqueue(_ operation: @escaping @MainActor () async -> Void) async {
         clear()
         let task = Task { @MainActor in

@@ -26,7 +26,7 @@ struct AnimalsGameView: View {
         .onAppear {
             viewModel.startRound()
             Task {
-                await app.voiceQueue.playInstruction(action: app.language.copy.findWord, target: viewModel.target.name, language: app.language)
+                await app.voiceQueue.playAnimalInstruction(action: app.language.copy.findWord, animal: viewModel.target, language: app.language)
             }
         }
     }

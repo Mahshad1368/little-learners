@@ -50,13 +50,31 @@ const miniChoiceLayouts = [
   { left: "42%", top: "46%" }
 ];
 
-const bubblePositions = [
-  "left-[8%] top-[16%]",
-  "left-[64%] top-[15%]",
-  "left-[28%] top-[38%]",
-  "left-[72%] top-[48%]",
-  "left-[12%] top-[58%]",
-  "left-[48%] top-[64%]"
+const bubbleLayouts = [
+  [
+    "left-[8%] top-[16%]",
+    "left-[64%] top-[15%]",
+    "left-[28%] top-[38%]",
+    "left-[72%] top-[48%]",
+    "left-[12%] top-[58%]",
+    "left-[48%] top-[64%]"
+  ],
+  [
+    "left-[56%] top-[18%]",
+    "left-[18%] top-[24%]",
+    "left-[74%] top-[36%]",
+    "left-[34%] top-[52%]",
+    "left-[62%] top-[66%]",
+    "left-[10%] top-[70%]"
+  ],
+  [
+    "left-[18%] top-[42%]",
+    "left-[50%] top-[20%]",
+    "left-[76%] top-[58%]",
+    "left-[30%] top-[68%]",
+    "left-[64%] top-[38%]",
+    "left-[8%] top-[18%]"
+  ]
 ];
 
 const localizedLetters: Record<Language, readonly string[]> = {
@@ -91,7 +109,6 @@ export function ToddlerLetterGame() {
   const [feedback, setFeedback] = useState<GameFeedback>({ wrongChoice: null, celebrationId: 0, celebrating: false });
   const [parentOpen, setParentOpen] = useState(false);
   const [activeMini, setActiveMini] = useState<MiniGameId>("bubbles");
-  const [fedCount, setFedCount] = useState(0);
   const [setupComplete, setSetupComplete] = useState(true);
   const [storageReady, setStorageReady] = useState(false);
   const [voiceClips, setVoiceClips] = useState<RecordedVoiceClip[]>([]);
@@ -161,7 +178,7 @@ export function ToddlerLetterGame() {
     }
 
     if (mode === "animals") {
-      const timer = window.setTimeout(() => playInstruction(t("game.find"), targetAnimal.name), 450);
+      const timer = window.setTimeout(() => playAnimalInstruction(targetAnimal), 450);
       return () => window.clearTimeout(timer);
     }
   }, [mode, targetAnimal.name, targetLetter, t]);
@@ -178,6 +195,16 @@ export function ToddlerLetterGame() {
     }
 
     await voiceQueue.speak(`${action} ${target}`, 3);
+  }
+
+  async function playAnimalInstruction(animal: ToddlerAnimal) {
+    if (muted) {
+      return;
+    }
+
+    await voiceQueue.speak(`${t("game.find")} ${animal.name}`, 3);
+    await wait(120);
+    await voiceQueue.speak(animal.sound, 3);
   }
 
   async function playEncouragement(fallbackVoice: string) {
@@ -250,11 +277,9 @@ export function ToddlerLetterGame() {
 
   function playMini(id: MiniGameId) {
     setActiveMini(id);
-    setFedCount(0);
     playPop();
     const prompts: Record<MiniGameId, string> = {
       bubbles: t("game.tapBubbles"),
-      monster: t("game.feedMonster"),
       fishing: formatDragPrompt(language, targetLetter),
       star: t("game.catchFish")
     };
@@ -268,7 +293,6 @@ export function ToddlerLetterGame() {
   function resetStars() {
     setStars(0);
     setRound(0);
-    setFedCount(0);
     setParentOpen(false);
   }
 
@@ -362,14 +386,9 @@ export function ToddlerLetterGame() {
             letterPool={letterPool}
             language={language}
             wrongChoice={feedback.wrongChoice}
-            fedCount={fedCount}
             onChooseMini={playMini}
             onReward={reward}
             onRetry={retry}
-            onFeed={() => {
-              setFedCount((current) => current + 1);
-              reward("Yum!");
-            }}
             t={t}
           />
         ) : null}
@@ -842,11 +861,9 @@ function MiniGamesMode({
   letterPool,
   language,
   wrongChoice,
-  fedCount,
   onChooseMini,
   onReward,
   onRetry,
-  onFeed,
   t
 }: {
   activeMini: MiniGameId;
@@ -854,16 +871,14 @@ function MiniGamesMode({
   letterPool: readonly string[];
   language: Language;
   wrongChoice: string | null;
-  fedCount: number;
   onChooseMini: (id: MiniGameId) => void;
   onReward: (voice?: string) => void;
   onRetry: (id: string) => void;
-  onFeed: () => void;
   t: Translate;
 }) {
   return (
     <motion.div className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-6xl flex-col gap-4 py-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {miniGames.map((game) => (
           <motion.button
             key={game.id}
@@ -881,7 +896,6 @@ function MiniGamesMode({
       </div>
       <div className="relative min-h-[31rem] flex-1 overflow-hidden rounded-[3rem] bg-white/35 shadow-soft backdrop-blur dark:bg-white/5">
         {activeMini === "bubbles" ? <BubblePop onReward={() => onReward(t("game.pop"))} t={t} /> : null}
-        {activeMini === "monster" ? <FeedMonster fedCount={fedCount} onFeed={onFeed} /> : null}
         {activeMini === "fishing" ? <DragLetters target={targetLetter} letterPool={letterPool} language={language} wrongChoice={wrongChoice} onReward={onReward} onRetry={onRetry} t={t} /> : null}
         {activeMini === "star" ? <CatchFish onReward={() => onReward(t("game.catchFish"))} t={t} /> : null}
       </div>
@@ -892,6 +906,8 @@ function MiniGamesMode({
 function BubblePop({ onReward, t }: { onReward: () => void; t: Translate }) {
   const [popped, setPopped] = useState<string[]>([]);
   const [wrongBubble, setWrongBubble] = useState<string | null>(null);
+  const [layoutIndex, setLayoutIndex] = useState(0);
+  const bubblePositions = bubbleLayouts[layoutIndex % bubbleLayouts.length];
   const correctCount = bubblePositions.length - 1;
 
   function popBubble(id: string, isDecoy: boolean) {
@@ -912,7 +928,10 @@ function BubblePop({ onReward, t }: { onReward: () => void; t: Translate }) {
     onReward();
 
     if (nextPopped.length >= correctCount) {
-      window.setTimeout(() => setPopped([]), 900);
+      window.setTimeout(() => {
+        setLayoutIndex((current) => current + 1);
+        setPopped([]);
+      }, 900);
     }
   }
 
@@ -961,25 +980,6 @@ function BubblePop({ onReward, t }: { onReward: () => void; t: Translate }) {
           {t("game.tryAgain")}
         </motion.p>
       ) : null}
-    </div>
-  );
-}
-
-function FeedMonster({ fedCount, onFeed }: { fedCount: number; onFeed: () => void }) {
-  const foods = ["🍓", "🍌", "🫐"];
-
-  return (
-    <div className="flex h-full min-h-[31rem] flex-col items-center justify-center gap-8 p-4">
-      <motion.div className="grid h-52 w-52 place-items-center rounded-[3rem] bg-[#c4b5fd] text-9xl shadow-lift sm:h-64 sm:w-64" animate={{ scale: [1, 1.05, 1], rotate: [0, -2, 2, 0] }} transition={{ duration: 2.1, repeat: Infinity }}>
-        {fedCount % 2 === 0 ? "👾" : "😋"}
-      </motion.div>
-      <div className="grid w-full max-w-xl grid-cols-3 gap-3">
-        {foods.map((food) => (
-          <motion.button key={food} drag dragSnapToOrigin className="min-h-28 rounded-[2rem] bg-white/70 text-6xl shadow-lift sm:min-h-36 sm:text-7xl" whileTap={{ scale: 0.9 }} onClick={onFeed} onDragEnd={onFeed} type="button" aria-label="Feed monster">
-            {food}
-          </motion.button>
-        ))}
-      </div>
     </div>
   );
 }

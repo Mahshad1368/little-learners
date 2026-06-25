@@ -160,7 +160,6 @@ struct AnimalItem: Identifiable, Equatable {
 
 enum MiniGameKind: String, CaseIterable, Identifiable {
     case bubblePop
-    case feedMonster
     case fishingLetters
     case catchStar
 

@@ -7,12 +7,12 @@ enum MockLearningData {
         AnimalItem(name: "Lion", emoji: "🦁", soundPrompt: "Roar"),
         AnimalItem(name: "Dog", emoji: "🐶", soundPrompt: "Woof"),
         AnimalItem(name: "Cat", emoji: "🐱", soundPrompt: "Meow"),
+        AnimalItem(name: "Cow", emoji: "🐮", soundPrompt: "Moooo"),
         AnimalItem(name: "Bird", emoji: "🐦", soundPrompt: "Tweet")
     ]
 
     static let miniGames: [MiniGameItem] = [
         MiniGameItem(id: .bubblePop, title: "Bubble Pop", emoji: "🫧"),
-        MiniGameItem(id: .feedMonster, title: "Feed the Monster", emoji: "👾"),
         MiniGameItem(id: .fishingLetters, title: "Drag Letters", emoji: "🔤"),
         MiniGameItem(id: .catchStar, title: "Catch the Fish", emoji: "🐠")
     ]
