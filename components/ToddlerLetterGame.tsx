@@ -780,29 +780,34 @@ function HomeToy({ onChoose, mascotHappy, t }: { onChoose: (mode: Mode) => void;
   ];
 
   return (
-    <motion.div className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-5xl flex-col items-center justify-center gap-4 overflow-hidden rounded-[2.5rem] px-4 py-5 sm:gap-6 sm:py-6" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}>
-      <div className="absolute inset-0 bg-[url('/family.png')] bg-cover bg-center opacity-[0.18]" aria-hidden="true" />
-      <div className="absolute inset-0 bg-white/62 backdrop-blur-[1px] dark:bg-slate-950/45" aria-hidden="true" />
+    <motion.div
+      className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] w-full max-w-6xl flex-col items-center justify-center gap-4 px-2 py-4 sm:gap-6 sm:px-4 sm:py-6"
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+    >
+      <div className="pointer-events-none fixed inset-0 z-0 bg-[url('/family.png')] bg-cover bg-center opacity-[0.16]" aria-hidden="true" />
+      <div className="pointer-events-none fixed inset-0 z-0 bg-white/54 backdrop-blur-[1px] dark:bg-slate-950/45" aria-hidden="true" />
       <motion.div
-        className="relative grid h-24 w-24 place-items-center rounded-full border border-white/80 bg-white/62 text-6xl shadow-lift backdrop-blur-xl sm:h-40 sm:w-40 sm:text-8xl"
+        className="relative z-10 grid h-24 w-24 place-items-center rounded-full border border-white/80 bg-white/62 text-6xl shadow-lift backdrop-blur-xl sm:h-36 sm:w-36 sm:text-8xl"
         animate={mascotHappy ? { scale: [1, 1.18, 1], rotate: [0, -8, 8, 0] } : { y: [0, -16, 0], rotate: [0, 4, -4, 0] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         aria-hidden="true"
       >
         {mascotFaces.calm}
       </motion.div>
-      <div className="relative grid w-full gap-3 sm:grid-cols-3 sm:gap-4">
+      <div className="relative z-10 grid w-full gap-3 sm:grid-cols-3 sm:gap-4">
         {buttons.map((button, index) => (
           <motion.button
             key={button.mode}
-            className={cn("crystal-button min-h-28 rounded-[2.5rem] bg-gradient-to-br px-4 text-3xl font-black text-white outline-none ring-offset-4 focus:ring-8 focus:ring-banana sm:min-h-48 sm:rounded-[3.5rem] sm:text-5xl", button.className)}
+            className={cn("crystal-button min-h-28 rounded-[2.5rem] bg-gradient-to-br px-4 text-3xl font-black text-white outline-none ring-offset-4 focus:ring-8 focus:ring-banana sm:min-h-40 sm:rounded-[3.5rem] sm:text-4xl lg:min-h-48 lg:text-5xl", button.className)}
             animate={{ y: [0, -8, 0], rotate: [0, index % 2 === 0 ? 1.5 : -1.5, 0] }}
             transition={{ duration: 2.4 + index * 0.25, repeat: Infinity, ease: "easeInOut" }}
             whileTap={{ scale: 0.93 }}
             onClick={() => onChoose(button.mode)}
             type="button"
           >
-            <span className="mb-1 block text-5xl sm:mb-3 sm:text-7xl" aria-hidden="true">{button.emoji}</span>
+            <span className="mb-1 block text-5xl sm:mb-3 sm:text-6xl lg:text-7xl" aria-hidden="true">{button.emoji}</span>
             {button.label}
           </motion.button>
         ))}
