@@ -182,6 +182,7 @@ struct FloatingToken: Identifiable {
     var driftX: Double = 18
     var driftY: Double = 24
     var duration: Double = 2.6
+    var colorHue: Double = 45
     var isWrong = false
 }
 

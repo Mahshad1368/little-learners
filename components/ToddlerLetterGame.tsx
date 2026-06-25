@@ -40,17 +40,18 @@ type SafeChoiceLayout = {
   y: number[];
   rotate: number[];
   duration: number;
+  hue: number;
 };
 
 const safeChoicePositions = [
-  { left: 18, top: 34 },
-  { left: 48, top: 31 },
-  { left: 76, top: 38 },
-  { left: 28, top: 57 },
-  { left: 62, top: 61 },
-  { left: 42, top: 76 },
-  { left: 80, top: 72 },
-  { left: 20, top: 74 }
+  { left: 17, top: 35 },
+  { left: 50, top: 30 },
+  { left: 80, top: 38 },
+  { left: 25, top: 58 },
+  { left: 64, top: 61 },
+  { left: 40, top: 78 },
+  { left: 82, top: 74 },
+  { left: 18, top: 78 }
 ];
 
 function seededIndex(seed: string, modulo: number) {
@@ -61,14 +62,15 @@ function seededIndex(seed: string, modulo: number) {
   return hash % modulo;
 }
 
-function pickSafeChoiceLayouts(count: number, targetIndex: number, seed: string): SafeChoiceLayout[] {
-  const previousTargetPosition = safeChoicePositions[seededIndex(`${seed}-previous`, safeChoicePositions.length)];
-  let targetPositionIndex = seededIndex(`${seed}-target`, safeChoicePositions.length);
+function pickSafeChoiceLayouts(count: number, targetIndex: number, round: number, kind: "letters" | "animals", seed: string): SafeChoiceLayout[] {
+  const kindOffset = kind === "letters" ? 1 : 4;
+  const previousTargetPosition = safeChoicePositions[((round - 1) * 5 + targetIndex * 2 + kindOffset + safeChoicePositions.length) % safeChoicePositions.length];
+  let targetPositionIndex = (round * 5 + targetIndex * 2 + kindOffset) % safeChoicePositions.length;
   const candidate = safeChoicePositions[targetPositionIndex];
   const tooCloseToPrevious = Math.abs(candidate.left - previousTargetPosition.left) + Math.abs(candidate.top - previousTargetPosition.top) < 28;
 
   if (tooCloseToPrevious) {
-    targetPositionIndex = (targetPositionIndex + 3) % safeChoicePositions.length;
+    targetPositionIndex = (targetPositionIndex + 4) % safeChoicePositions.length;
   }
 
   const orderedPositions = [
@@ -80,16 +82,23 @@ function pickSafeChoiceLayouts(count: number, targetIndex: number, seed: string)
     const position = index === targetIndex ? orderedPositions[0] : orderedPositions[(index + 1) % orderedPositions.length];
     const motionSeed = seededIndex(`${seed}-${index}-motion`, 13);
     const direction = index % 2 === 0 ? 1 : -1;
-    const driftX = 26 + motionSeed * 2;
-    const driftY = 20 + ((motionSeed * 3) % 18);
+    const driftX = index === targetIndex ? 54 + motionSeed * 3 : 28 + motionSeed * 2;
+    const driftY = index === targetIndex ? 42 + ((motionSeed * 5) % 30) : 24 + ((motionSeed * 3) % 20);
 
     return {
       left: `${position.left}%`,
       top: `${position.top}%`,
-      x: [0, driftX * direction, -Math.round(driftX * 0.72), Math.round(driftX * 0.46) * direction, 0],
-      y: [0, -driftY, Math.round(driftY * 0.9), -Math.round(driftY * 0.5), 0],
-      rotate: [-5 * direction, 8 * direction, -7 * direction, 5 * direction, -5 * direction],
-      duration: 4.8 + (motionSeed % 5) * 0.22
+      x:
+        index === targetIndex
+          ? [0, driftX * direction, -Math.round(driftX * 0.82), Math.round(driftX * 0.55) * -direction, Math.round(driftX * 0.28) * direction, 0]
+          : [0, Math.round(driftX * 0.55) * direction, -Math.round(driftX * 0.38), 0],
+      y:
+        index === targetIndex
+          ? [0, -driftY, Math.round(driftY * 0.78), -Math.round(driftY * 0.46), Math.round(driftY * 0.34), 0]
+          : [0, -Math.round(driftY * 0.45), Math.round(driftY * 0.36), 0],
+      rotate: index === targetIndex ? [-8 * direction, 13 * direction, -12 * direction, 9 * -direction, 6 * direction, -8 * direction] : [-4 * direction, 5 * direction, -4 * direction, -4 * direction],
+      duration: index === targetIndex ? 2.55 + (motionSeed % 4) * 0.16 : 3.35 + (motionSeed % 5) * 0.2,
+      hue: (motionSeed * 37 + index * 54) % 360
     };
   });
 }
@@ -818,7 +827,7 @@ function HomeToy({ onChoose, mascotHappy, t }: { onChoose: (mode: Mode) => void;
 
 function LettersMode({ round, target, letters, language, wrongChoice, celebrating, onPick, t }: { round: number; target: string; letters: readonly string[]; language: Language; wrongChoice: string | null; celebrating: boolean; onPick: (letter: string) => void; t: Translate }) {
   const targetIndex = Math.max(0, letters.indexOf(target));
-  const layouts = useMemo(() => pickSafeChoiceLayouts(letters.length, targetIndex, `letters-${round}-${target}`), [letters.length, round, target, targetIndex]);
+  const layouts = useMemo(() => pickSafeChoiceLayouts(letters.length, targetIndex, round, "letters", `letters-${round}-${target}`), [letters.length, round, target, targetIndex]);
 
   return (
     <motion.div className="relative z-10 h-[calc(100svh-10rem)] min-h-[34rem]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -832,10 +841,10 @@ function LettersMode({ round, target, letters, language, wrongChoice, celebratin
             aria-label={`${t("game.catch")} ${letter}`}
             className={cn(
               "absolute grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-6xl font-black shadow-lift backdrop-blur transition-[filter,opacity] sm:h-36 sm:w-36 sm:text-8xl",
-              isTarget ? "z-20 bg-banana/95 text-berry ring-8 ring-banana/45 saturate-150" : "z-0 bg-white/28 text-ink/45 opacity-45 blur-[0.6px] saturate-50 dark:bg-white/10 dark:text-white/45",
+              isTarget ? "z-20 bg-banana/95 text-berry ring-8 ring-banana/45 saturate-150" : "z-0 bg-white/45 text-ink/65 opacity-[0.62] blur-[0.35px] saturate-75 dark:bg-white/[0.14] dark:text-white/60",
               wrongChoice === letter && "z-20 bg-red-400 text-white ring-8 ring-red-200"
             )}
-            style={{ left: path.left, top: path.top }}
+            style={{ left: path.left, top: path.top, backgroundColor: isTarget ? undefined : `hsla(${path.hue}, 92%, 72%, 0.36)` }}
             initial={{ opacity: 0, scale: 0.85 }}
             animate={
               wrongChoice === letter
@@ -845,7 +854,7 @@ function LettersMode({ round, target, letters, language, wrongChoice, celebratin
                     y: path.y,
                     rotate: path.rotate,
                     opacity: 1,
-                    scale: isTarget && celebrating ? [1, 1.45, 0.78, 1] : isTarget ? [1, 1.18, 1.06, 1.2, 1] : [0.88, 0.92, 0.88],
+                    scale: isTarget && celebrating ? [1, 1.45, 0.78, 1] : isTarget ? [1.08, 1.28, 1.12, 1.32, 1.08] : [0.86, 0.94, 0.88, 0.92],
                     boxShadow: isTarget ? ["0 18px 45px rgba(255, 209, 102, 0.35)", "0 30px 80px rgba(255, 122, 168, 0.55)", "0 18px 45px rgba(255, 209, 102, 0.35)"] : undefined
                   }
             }
@@ -864,7 +873,7 @@ function LettersMode({ round, target, letters, language, wrongChoice, celebratin
 
 function AnimalsMode({ round, target, animals, language, wrongChoice, celebrating, onPick, t }: { round: number; target: string; animals: readonly ToddlerAnimal[]; language: Language; wrongChoice: string | null; celebrating: boolean; onPick: (name: string, sound: string) => void; t: Translate }) {
   const targetIndex = Math.max(0, animals.findIndex((animal) => animal.name === target));
-  const layouts = useMemo(() => pickSafeChoiceLayouts(animals.length, targetIndex, `animals-${round}-${target}`), [animals.length, round, target, targetIndex]);
+  const layouts = useMemo(() => pickSafeChoiceLayouts(animals.length, targetIndex, round, "animals", `animals-${round}-${target}`), [animals.length, round, target, targetIndex]);
 
   return (
     <motion.div className="relative z-10 h-[calc(100svh-10rem)] min-h-[34rem]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -878,10 +887,10 @@ function AnimalsMode({ round, target, animals, language, wrongChoice, celebratin
             aria-label={`${t("game.find")} ${animal.name}`}
             className={cn(
               "absolute grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[2.25rem] text-7xl shadow-lift backdrop-blur transition-[filter,opacity] sm:h-40 sm:w-40 sm:text-8xl",
-              isTarget ? "z-20 bg-banana/95 ring-8 ring-banana/45 saturate-150" : "z-0 bg-white/24 opacity-[0.42] blur-[0.7px] grayscale-[35%] saturate-50",
+              isTarget ? "z-20 bg-banana/95 ring-8 ring-banana/45 saturate-150" : "z-0 bg-white/42 opacity-[0.65] blur-[0.3px] saturate-80",
               wrongChoice === animal.name && "z-20 bg-red-400 ring-8 ring-red-200"
             )}
-            style={{ left: path.left, top: path.top }}
+            style={{ left: path.left, top: path.top, backgroundColor: isTarget ? undefined : `hsla(${path.hue}, 88%, 74%, 0.38)` }}
             initial={{ opacity: 0, scale: 0.85 }}
             animate={
               wrongChoice === animal.name
@@ -889,9 +898,9 @@ function AnimalsMode({ round, target, animals, language, wrongChoice, celebratin
                 : {
                     x: path.x,
                     y: path.y,
-                    rotate: isTarget && celebrating ? [0, -12, 12, 0] : [0, 4, -4, 0],
+                    rotate: path.rotate,
                     opacity: 1,
-                    scale: isTarget && celebrating ? [1, 1.36, 1] : isTarget ? [1, 1.16, 1.05, 1.18, 1] : [0.88, 0.93, 0.88],
+                    scale: isTarget && celebrating ? [1, 1.36, 1] : isTarget ? [1.08, 1.26, 1.1, 1.3, 1.08] : [0.86, 0.94, 0.88, 0.92],
                     boxShadow: isTarget ? ["0 18px 45px rgba(255, 209, 102, 0.35)", "0 28px 76px rgba(94, 234, 212, 0.56)", "0 18px 45px rgba(255, 209, 102, 0.35)"] : undefined
                   }
             }
