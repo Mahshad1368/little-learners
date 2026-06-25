@@ -4,7 +4,16 @@ struct GiantToyButton: View {
     let title: String
     let emoji: String
     let color: Color
+    let height: CGFloat
     let action: () -> Void
+
+    init(title: String, emoji: String, color: Color, height: CGFloat = 132, action: @escaping () -> Void) {
+        self.title = title
+        self.emoji = emoji
+        self.color = color
+        self.height = height
+        self.action = action
+    }
 
     var body: some View {
         Button(action: action) {
@@ -17,7 +26,7 @@ struct GiantToyButton: View {
                     .minimumScaleFactor(0.72)
             }
             .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 132)
+            .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
             .padding(.horizontal, 16)
             .background {
                 RoundedRectangle(cornerRadius: 48, style: .continuous)
