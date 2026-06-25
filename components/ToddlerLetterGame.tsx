@@ -33,14 +33,66 @@ const STARS_KEY = "little-learners-toy-stars";
 const MUTE_KEY = "little-learners-muted";
 const WELCOMED_KEY = "little-learners-welcomed-this-session";
 
-const mainChoiceLayouts = [
-  { left: "12%", top: "28%", x: [0, 42, -18, 28, 0], y: [0, -28, 24, -12, 0], rotate: [-6, 9, -4, 7, -6], duration: 4.2 },
-  { left: "58%", top: "26%", x: [0, -36, 24, -18, 0], y: [0, 22, -26, 14, 0], rotate: [5, -8, 6, -5, 5], duration: 4.6 },
-  { left: "25%", top: "52%", x: [0, 34, -28, 18, 0], y: [0, 28, -18, 24, 0], rotate: [-3, 8, -7, 4, -3], duration: 4.4 },
-  { left: "56%", top: "56%", x: [0, -32, 26, -24, 0], y: [0, -24, 22, -14, 0], rotate: [4, -7, 8, -5, 4], duration: 4.8 },
-  { left: "40%", top: "74%", x: [0, 28, -34, 20, 0], y: [0, -30, 16, -22, 0], rotate: [-5, 6, -9, 5, -5], duration: 4.5 },
-  { left: "72%", top: "42%", x: [0, -38, 20, -28, 0], y: [0, 18, -30, 12, 0], rotate: [6, -9, 5, -6, 6], duration: 4.7 }
+type SafeChoiceLayout = {
+  left: string;
+  top: string;
+  x: number[];
+  y: number[];
+  rotate: number[];
+  duration: number;
+};
+
+const safeChoicePositions = [
+  { left: 18, top: 34 },
+  { left: 48, top: 31 },
+  { left: 76, top: 38 },
+  { left: 28, top: 57 },
+  { left: 62, top: 61 },
+  { left: 42, top: 76 },
+  { left: 80, top: 72 },
+  { left: 20, top: 74 }
 ];
+
+function seededIndex(seed: string, modulo: number) {
+  let hash = 0;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = (hash * 31 + seed.charCodeAt(index)) >>> 0;
+  }
+  return hash % modulo;
+}
+
+function pickSafeChoiceLayouts(count: number, targetIndex: number, seed: string): SafeChoiceLayout[] {
+  const previousTargetPosition = safeChoicePositions[seededIndex(`${seed}-previous`, safeChoicePositions.length)];
+  let targetPositionIndex = seededIndex(`${seed}-target`, safeChoicePositions.length);
+  const candidate = safeChoicePositions[targetPositionIndex];
+  const tooCloseToPrevious = Math.abs(candidate.left - previousTargetPosition.left) + Math.abs(candidate.top - previousTargetPosition.top) < 28;
+
+  if (tooCloseToPrevious) {
+    targetPositionIndex = (targetPositionIndex + 3) % safeChoicePositions.length;
+  }
+
+  const orderedPositions = [
+    safeChoicePositions[targetPositionIndex],
+    ...safeChoicePositions.filter((_, index) => index !== targetPositionIndex)
+  ];
+
+  return Array.from({ length: count }, (_, index) => {
+    const position = index === targetIndex ? orderedPositions[0] : orderedPositions[(index + 1) % orderedPositions.length];
+    const motionSeed = seededIndex(`${seed}-${index}-motion`, 13);
+    const direction = index % 2 === 0 ? 1 : -1;
+    const driftX = 26 + motionSeed * 2;
+    const driftY = 20 + ((motionSeed * 3) % 18);
+
+    return {
+      left: `${position.left}%`,
+      top: `${position.top}%`,
+      x: [0, driftX * direction, -Math.round(driftX * 0.72), Math.round(driftX * 0.46) * direction, 0],
+      y: [0, -driftY, Math.round(driftY * 0.9), -Math.round(driftY * 0.5), 0],
+      rotate: [-5 * direction, 8 * direction, -7 * direction, 5 * direction, -5 * direction],
+      duration: 4.8 + (motionSeed % 5) * 0.22
+    };
+  });
+}
 
 const miniChoiceLayouts = [
   { left: "10%", top: "34%" },
@@ -379,10 +431,10 @@ export function ToddlerLetterGame() {
           <WelcomeToy key="welcome" onStart={startWelcome} t={t} />
         ) : null}
         {mode === "letters" ? (
-          <LettersMode key="letters" target={targetLetter} letters={floatingLetters} language={language} wrongChoice={feedback.wrongChoice} celebrating={feedback.celebrating} onPick={chooseLetter} t={t} />
+          <LettersMode key="letters" round={round} target={targetLetter} letters={floatingLetters} language={language} wrongChoice={feedback.wrongChoice} celebrating={feedback.celebrating} onPick={chooseLetter} t={t} />
         ) : null}
         {mode === "animals" ? (
-          <AnimalsMode key="animals" target={targetAnimal.name} animals={visibleAnimals} language={language} wrongChoice={feedback.wrongChoice} celebrating={feedback.celebrating} onPick={chooseAnimal} t={t} />
+          <AnimalsMode key="animals" round={round} target={targetAnimal.name} animals={visibleAnimals} language={language} wrongChoice={feedback.wrongChoice} celebrating={feedback.celebrating} onPick={chooseAnimal} t={t} />
         ) : null}
         {mode === "minis" ? (
           <MiniGamesMode
@@ -728,29 +780,29 @@ function HomeToy({ onChoose, mascotHappy, t }: { onChoose: (mode: Mode) => void;
   ];
 
   return (
-    <motion.div className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-5xl flex-col items-center justify-center gap-7 overflow-hidden rounded-[2.5rem] px-4 py-6" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}>
-      <div className="absolute inset-0 bg-[url('/family.png')] bg-cover bg-center opacity-25" aria-hidden="true" />
-      <div className="absolute inset-0 bg-white/42 backdrop-blur-[2px] dark:bg-slate-950/45" aria-hidden="true" />
+    <motion.div className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-5xl flex-col items-center justify-center gap-4 overflow-hidden rounded-[2.5rem] px-4 py-5 sm:gap-6 sm:py-6" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}>
+      <div className="absolute inset-0 bg-[url('/family.png')] bg-cover bg-center opacity-[0.18]" aria-hidden="true" />
+      <div className="absolute inset-0 bg-white/62 backdrop-blur-[1px] dark:bg-slate-950/45" aria-hidden="true" />
       <motion.div
-        className="relative grid h-40 w-40 place-items-center rounded-full border border-white/80 bg-white/62 text-8xl shadow-lift backdrop-blur-xl sm:h-52 sm:w-52 sm:text-9xl"
+        className="relative grid h-24 w-24 place-items-center rounded-full border border-white/80 bg-white/62 text-6xl shadow-lift backdrop-blur-xl sm:h-40 sm:w-40 sm:text-8xl"
         animate={mascotHappy ? { scale: [1, 1.18, 1], rotate: [0, -8, 8, 0] } : { y: [0, -16, 0], rotate: [0, 4, -4, 0] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         aria-hidden="true"
       >
         {mascotFaces.calm}
       </motion.div>
-      <div className="grid w-full gap-4 sm:grid-cols-3">
+      <div className="relative grid w-full gap-3 sm:grid-cols-3 sm:gap-4">
         {buttons.map((button, index) => (
           <motion.button
             key={button.mode}
-            className={cn("crystal-button min-h-36 rounded-[3.5rem] bg-gradient-to-br px-4 text-4xl font-black text-white outline-none ring-offset-4 focus:ring-8 focus:ring-banana sm:min-h-56 sm:text-5xl", button.className)}
+            className={cn("crystal-button min-h-28 rounded-[2.5rem] bg-gradient-to-br px-4 text-3xl font-black text-white outline-none ring-offset-4 focus:ring-8 focus:ring-banana sm:min-h-48 sm:rounded-[3.5rem] sm:text-5xl", button.className)}
             animate={{ y: [0, -8, 0], rotate: [0, index % 2 === 0 ? 1.5 : -1.5, 0] }}
             transition={{ duration: 2.4 + index * 0.25, repeat: Infinity, ease: "easeInOut" }}
             whileTap={{ scale: 0.93 }}
             onClick={() => onChoose(button.mode)}
             type="button"
           >
-            <span className="mb-3 block text-6xl sm:text-7xl" aria-hidden="true">{button.emoji}</span>
+            <span className="mb-1 block text-5xl sm:mb-3 sm:text-7xl" aria-hidden="true">{button.emoji}</span>
             {button.label}
           </motion.button>
         ))}
@@ -759,29 +811,23 @@ function HomeToy({ onChoose, mascotHappy, t }: { onChoose: (mode: Mode) => void;
   );
 }
 
-function LettersMode({ target, letters, language, wrongChoice, celebrating, onPick, t }: { target: string; letters: readonly string[]; language: Language; wrongChoice: string | null; celebrating: boolean; onPick: (letter: string) => void; t: Translate }) {
-  const letterColors = [
-    "bg-white/72 text-ink dark:bg-white/12 dark:text-white",
-    "bg-mint/65 text-ink",
-    "bg-sky/55 text-ink",
-    "bg-leaf/55 text-ink",
-    "bg-white/72 text-plum dark:bg-white/12",
-    "bg-banana/50 text-ink"
-  ];
+function LettersMode({ round, target, letters, language, wrongChoice, celebrating, onPick, t }: { round: number; target: string; letters: readonly string[]; language: Language; wrongChoice: string | null; celebrating: boolean; onPick: (letter: string) => void; t: Translate }) {
+  const targetIndex = Math.max(0, letters.indexOf(target));
+  const layouts = useMemo(() => pickSafeChoiceLayouts(letters.length, targetIndex, `letters-${round}-${target}`), [letters.length, round, target, targetIndex]);
 
   return (
     <motion.div className="relative z-10 h-[calc(100svh-10rem)] min-h-[34rem]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <MascotPrompt mascot={celebrating ? mascotFaces.sparkle : mascotFaces.happy} prompt={formatCatchPrompt(language, target)} celebrating={celebrating} />
       {letters.map((letter, index) => {
-        const path = mainChoiceLayouts[index % mainChoiceLayouts.length];
+        const path = layouts[index % layouts.length];
         const isTarget = letter === target;
         return (
           <motion.button
             key={`${letter}-${index}-${target}`}
             aria-label={`${t("game.catch")} ${letter}`}
             className={cn(
-              "absolute grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-6xl font-black shadow-lift backdrop-blur sm:h-36 sm:w-36 sm:text-8xl",
-              isTarget ? "z-10 bg-banana/95 text-berry ring-8 ring-banana/45" : letterColors[index % letterColors.length],
+              "absolute grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-6xl font-black shadow-lift backdrop-blur transition-[filter,opacity] sm:h-36 sm:w-36 sm:text-8xl",
+              isTarget ? "z-20 bg-banana/95 text-berry ring-8 ring-banana/45 saturate-150" : "z-0 bg-white/28 text-ink/45 opacity-45 blur-[0.6px] saturate-50 dark:bg-white/10 dark:text-white/45",
               wrongChoice === letter && "z-20 bg-red-400 text-white ring-8 ring-red-200"
             )}
             style={{ left: path.left, top: path.top }}
@@ -794,8 +840,8 @@ function LettersMode({ target, letters, language, wrongChoice, celebrating, onPi
                     y: path.y,
                     rotate: path.rotate,
                     opacity: 1,
-                    scale: isTarget && celebrating ? [1, 1.45, 0.78, 1] : isTarget ? [1, 1.16, 1] : [1, 1.05, 1],
-                    boxShadow: isTarget ? ["0 18px 45px rgba(255, 209, 102, 0.35)", "0 26px 70px rgba(255, 122, 168, 0.5)", "0 18px 45px rgba(255, 209, 102, 0.35)"] : undefined
+                    scale: isTarget && celebrating ? [1, 1.45, 0.78, 1] : isTarget ? [1, 1.18, 1.06, 1.2, 1] : [0.88, 0.92, 0.88],
+                    boxShadow: isTarget ? ["0 18px 45px rgba(255, 209, 102, 0.35)", "0 30px 80px rgba(255, 122, 168, 0.55)", "0 18px 45px rgba(255, 209, 102, 0.35)"] : undefined
                   }
             }
             transition={wrongChoice === letter ? { duration: 0.42 } : { duration: path.duration, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
@@ -811,22 +857,23 @@ function LettersMode({ target, letters, language, wrongChoice, celebrating, onPi
   );
 }
 
-function AnimalsMode({ target, animals, language, wrongChoice, celebrating, onPick, t }: { target: string; animals: readonly ToddlerAnimal[]; language: Language; wrongChoice: string | null; celebrating: boolean; onPick: (name: string, sound: string) => void; t: Translate }) {
-  const animalColors = ["bg-white/72", "bg-mint/60", "bg-sky/50", "bg-leaf/50", "bg-banana/45", "bg-white/72"];
+function AnimalsMode({ round, target, animals, language, wrongChoice, celebrating, onPick, t }: { round: number; target: string; animals: readonly ToddlerAnimal[]; language: Language; wrongChoice: string | null; celebrating: boolean; onPick: (name: string, sound: string) => void; t: Translate }) {
+  const targetIndex = Math.max(0, animals.findIndex((animal) => animal.name === target));
+  const layouts = useMemo(() => pickSafeChoiceLayouts(animals.length, targetIndex, `animals-${round}-${target}`), [animals.length, round, target, targetIndex]);
 
   return (
     <motion.div className="relative z-10 h-[calc(100svh-10rem)] min-h-[34rem]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <MascotPrompt mascot={celebrating ? mascotFaces.sparkle : "🐯"} prompt={formatFindPrompt(language, target)} celebrating={celebrating} />
       {animals.map((animal, index) => {
-        const path = mainChoiceLayouts[index % mainChoiceLayouts.length];
+        const path = layouts[index % layouts.length];
         const isTarget = animal.name === target;
         return (
           <motion.button
             key={`${animal.name}-${target}`}
             aria-label={`${t("game.find")} ${animal.name}`}
             className={cn(
-              "absolute grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[2.25rem] text-7xl shadow-lift backdrop-blur sm:h-40 sm:w-40 sm:text-8xl",
-              isTarget ? "z-10 bg-banana/95 ring-8 ring-banana/45" : animalColors[index % animalColors.length],
+              "absolute grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[2.25rem] text-7xl shadow-lift backdrop-blur transition-[filter,opacity] sm:h-40 sm:w-40 sm:text-8xl",
+              isTarget ? "z-20 bg-banana/95 ring-8 ring-banana/45 saturate-150" : "z-0 bg-white/24 opacity-[0.42] blur-[0.7px] grayscale-[35%] saturate-50",
               wrongChoice === animal.name && "z-20 bg-red-400 ring-8 ring-red-200"
             )}
             style={{ left: path.left, top: path.top }}
@@ -839,8 +886,8 @@ function AnimalsMode({ target, animals, language, wrongChoice, celebrating, onPi
                     y: path.y,
                     rotate: isTarget && celebrating ? [0, -12, 12, 0] : [0, 4, -4, 0],
                     opacity: 1,
-                    scale: isTarget && celebrating ? [1, 1.36, 1] : isTarget ? [1, 1.15, 1] : [1, 1.04, 1],
-                    boxShadow: isTarget ? ["0 18px 45px rgba(255, 209, 102, 0.35)", "0 28px 76px rgba(94, 234, 212, 0.52)", "0 18px 45px rgba(255, 209, 102, 0.35)"] : undefined
+                    scale: isTarget && celebrating ? [1, 1.36, 1] : isTarget ? [1, 1.16, 1.05, 1.18, 1] : [0.88, 0.93, 0.88],
+                    boxShadow: isTarget ? ["0 18px 45px rgba(255, 209, 102, 0.35)", "0 28px 76px rgba(94, 234, 212, 0.56)", "0 18px 45px rgba(255, 209, 102, 0.35)"] : undefined
                   }
             }
             transition={wrongChoice === animal.name ? { duration: 0.45 } : { duration: path.duration, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}

@@ -10,14 +10,14 @@ struct GiantToyButton: View {
         Button(action: action) {
             VStack(spacing: 10) {
                 Text(emoji)
-                    .font(.system(size: 62))
+                    .font(.system(size: 54))
                 Text(title)
-                    .font(.system(.title2, design: .rounded, weight: .black))
+                    .font(.system(.title3, design: .rounded, weight: .black))
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.72)
             }
             .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 154)
+            .frame(maxWidth: .infinity, minHeight: 132)
             .padding(.horizontal, 16)
             .background {
                 RoundedRectangle(cornerRadius: 48, style: .continuous)
