@@ -64,9 +64,9 @@ struct HomeView: View {
 
     @ViewBuilder
     private func homeButtons(height: CGFloat) -> some View {
-        GiantToyButton(title: "Letters", emoji: "🔤", color: ToyTheme.berry, height: height) { app.setScreen(.letters) }
-        GiantToyButton(title: "Animals", emoji: "🦁", color: ToyTheme.sky, height: height) { app.setScreen(.animals) }
-        GiantToyButton(title: "Mini Games", emoji: "⭐", color: ToyTheme.leaf, height: height) { app.setScreen(.miniGames) }
+        GiantToyButton(title: app.language.copy.lettersTitle, emoji: "🔤", color: ToyTheme.berry, height: height) { app.setScreen(.letters) }
+        GiantToyButton(title: app.language.copy.animalsTitle, emoji: "🦁", color: ToyTheme.sky, height: height) { app.setScreen(.animals) }
+        GiantToyButton(title: app.language.copy.miniGamesTitle, emoji: "⭐", color: ToyTheme.leaf, height: height) { app.setScreen(.miniGames) }
     }
 
     private var topBar: some View {

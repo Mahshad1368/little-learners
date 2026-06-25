@@ -49,6 +49,8 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 }
 
 struct LocalizedCopy {
+    let appName: String
+    let welcomeTitle: String
     let parentOnly: String
     let setupTitle: String
     let setupSubtitle: String
@@ -66,6 +68,26 @@ struct LocalizedCopy {
     let findWord: String
     let welcomeTagline: String
     let getStarted: String
+    let lettersTitle: String
+    let animalsTitle: String
+    let miniGamesTitle: String
+    let parentSettings: String
+    let parentSettingsAccessibility: String
+    let stars: String
+    let soundOn: String
+    let mute: String
+    let resetVoiceRecordings: String
+    let resetStars: String
+    let close: String
+    let target: String
+    let dropHere: String
+    let tapBubbles: String
+    let popBubbleAccessibility: String
+    let catchFish: String
+    let catchFishAccessibility: String
+    let bubblePopTitle: String
+    let dragLettersTitle: String
+    let catchFishTitle: String
 }
 
 extension AppLanguage {
@@ -73,6 +95,8 @@ extension AppLanguage {
         switch self {
         case .en:
             return LocalizedCopy(
+                appName: "Little Learners",
+                welcomeTitle: "hey Baby",
                 parentOnly: "For Parents Only",
                 setupTitle: "Parent Voice Setup",
                 setupSubtitle: "Record your voice so your child can hear familiar encouragement during the game.",
@@ -89,10 +113,32 @@ extension AppLanguage {
                 catchWord: "Catch",
                 findWord: "Find",
                 welcomeTagline: "Let's learn and play together!",
-                getStarted: "Get Started"
+                getStarted: "Get Started",
+                lettersTitle: "Letters",
+                animalsTitle: "Animals",
+                miniGamesTitle: "Mini Games",
+                parentSettings: "Parent Settings",
+                parentSettingsAccessibility: "Parent settings",
+                stars: "stars",
+                soundOn: "Sound On",
+                mute: "Mute",
+                resetVoiceRecordings: "Reset Voice Recordings",
+                resetStars: "Reset Stars",
+                close: "Close",
+                target: "Target",
+                dropHere: "Drop here",
+                tapBubbles: "Tap the bubbles!",
+                popBubbleAccessibility: "Pop bubble",
+                catchFish: "Catch the Fish!",
+                catchFishAccessibility: "Catch the fish",
+                bubblePopTitle: "Bubble Pop",
+                dragLettersTitle: "Drag Letters",
+                catchFishTitle: "Catch the Fish"
             )
         case .de:
             return LocalizedCopy(
+                appName: "Little Learners",
+                welcomeTitle: "Hallo Baby",
                 parentOnly: "Nur für Eltern",
                 setupTitle: "Stimme der Eltern einrichten",
                 setupSubtitle: "Nehmen Sie Ihre Stimme auf, damit Ihr Kind während des Spiels vertraute Ermutigungen hört.",
@@ -109,10 +155,32 @@ extension AppLanguage {
                 catchWord: "Fang",
                 findWord: "Finde",
                 welcomeTagline: "Lass uns gemeinsam lernen und spielen!",
-                getStarted: "Los geht's"
+                getStarted: "Los geht's",
+                lettersTitle: "Buchstaben",
+                animalsTitle: "Tiere",
+                miniGamesTitle: "Minispiele",
+                parentSettings: "Elternbereich",
+                parentSettingsAccessibility: "Elternbereich",
+                stars: "Sterne",
+                soundOn: "Ton an",
+                mute: "Stumm",
+                resetVoiceRecordings: "Stimmen löschen",
+                resetStars: "Sterne zurücksetzen",
+                close: "Schließen",
+                target: "Ziel",
+                dropHere: "Hier ablegen",
+                tapBubbles: "Tippe die Blasen!",
+                popBubbleAccessibility: "Blase platzen lassen",
+                catchFish: "Fang den Fisch!",
+                catchFishAccessibility: "Fang den Fisch",
+                bubblePopTitle: "Blasen",
+                dragLettersTitle: "Buchstaben ziehen",
+                catchFishTitle: "Fisch fangen"
             )
         case .fa:
             return LocalizedCopy(
+                appName: "Little Learners",
+                welcomeTitle: "سلام کوچولو",
                 parentOnly: "فقط برای والدین",
                 setupTitle: "تنظیم صدای والدین",
                 setupSubtitle: "صدای خود را ضبط کنید تا کودک شما هنگام بازی صدایی آشنا و دلگرم‌کننده بشنود.",
@@ -129,8 +197,113 @@ extension AppLanguage {
                 catchWord: "بگیر",
                 findWord: "پیدا کن",
                 welcomeTagline: "بیا با هم یاد بگیریم و بازی کنیم!",
-                getStarted: "شروع کنیم"
+                getStarted: "شروع کنیم",
+                lettersTitle: "حروف",
+                animalsTitle: "حیوانات",
+                miniGamesTitle: "بازی‌ها",
+                parentSettings: "تنظیمات والدین",
+                parentSettingsAccessibility: "تنظیمات والدین",
+                stars: "ستاره",
+                soundOn: "صدا روشن",
+                mute: "بی‌صدا",
+                resetVoiceRecordings: "حذف صدای ضبط‌شده",
+                resetStars: "حذف ستاره‌ها",
+                close: "بستن",
+                target: "هدف",
+                dropHere: "اینجا بنداز",
+                tapBubbles: "روی حباب‌ها بزن!",
+                popBubbleAccessibility: "ترکاندن حباب",
+                catchFish: "ماهی را بگیر!",
+                catchFishAccessibility: "گرفتن ماهی",
+                bubblePopTitle: "حباب‌ها",
+                dragLettersTitle: "کشیدن حروف",
+                catchFishTitle: "گرفتن ماهی"
             )
+        }
+    }
+
+    var alphabetSymbols: [String] {
+        switch self {
+        case .en:
+            return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".map(String.init)
+        case .de:
+            return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".map(String.init) + ["Ä", "Ö", "Ü", "ß"]
+        case .fa:
+            return ["آ", "ا", "ب", "پ", "ت", "ث", "ج", "چ", "ح", "خ", "د", "ذ", "ر", "ز", "ژ", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ک", "گ", "ل", "م", "ن", "و", "ه", "ی"]
+        }
+    }
+
+    var letters: [LetterItem] {
+        alphabetSymbols.map { LetterItem(symbol: $0) }
+    }
+
+    var animals: [AnimalItem] {
+        switch self {
+        case .en:
+            return [
+                AnimalItem(name: "Lion", emoji: "🦁", soundPrompt: "Roar"),
+                AnimalItem(name: "Dog", emoji: "🐶", soundPrompt: "Woof"),
+                AnimalItem(name: "Cat", emoji: "🐱", soundPrompt: "Meow"),
+                AnimalItem(name: "Cow", emoji: "🐮", soundPrompt: "Moooo"),
+                AnimalItem(name: "Bird", emoji: "🐦", soundPrompt: "Tweet")
+            ]
+        case .de:
+            return [
+                AnimalItem(name: "Löwe", emoji: "🦁", soundPrompt: "Roar"),
+                AnimalItem(name: "Hund", emoji: "🐶", soundPrompt: "Woof"),
+                AnimalItem(name: "Katze", emoji: "🐱", soundPrompt: "Meow"),
+                AnimalItem(name: "Kuh", emoji: "🐮", soundPrompt: "Moooo"),
+                AnimalItem(name: "Vogel", emoji: "🐦", soundPrompt: "Tweet")
+            ]
+        case .fa:
+            return [
+                AnimalItem(name: "شیر", emoji: "🦁", soundPrompt: "Roar"),
+                AnimalItem(name: "سگ", emoji: "🐶", soundPrompt: "Woof"),
+                AnimalItem(name: "گربه", emoji: "🐱", soundPrompt: "Meow"),
+                AnimalItem(name: "گاو", emoji: "🐮", soundPrompt: "Moooo"),
+                AnimalItem(name: "پرنده", emoji: "🐦", soundPrompt: "Tweet")
+            ]
+        }
+    }
+
+    var miniGames: [MiniGameItem] {
+        [
+            MiniGameItem(id: .bubblePop, title: copy.bubblePopTitle, emoji: "🫧"),
+            MiniGameItem(id: .fishingLetters, title: copy.dragLettersTitle, emoji: "🔤"),
+            MiniGameItem(id: .catchStar, title: copy.catchFishTitle, emoji: "🐠")
+        ]
+    }
+
+    func catchPrompt(for target: String) -> String {
+        switch self {
+        case .en:
+            return "\(copy.catchWord) \(target)!"
+        case .de:
+            return "\(copy.catchWord) \(target)!"
+        case .fa:
+            return "\(target) را \(copy.catchWord)!"
+        }
+    }
+
+    func findPrompt(for target: String) -> String {
+        switch self {
+        case .en:
+            return "\(copy.findWord) \(target)!"
+        case .de:
+            return "\(copy.findWord) \(target)!"
+        case .fa:
+            return "\(target) را \(copy.findWord)!"
+        }
+    }
+
+    func dragPrompt(for target: String) -> String {
+        switch self {
+        case .en:
+            return "Drag \(target)!"
+        case .de:
+            return "Zieh \(target)!"
+        case .fa:
+            return "حرف \(target) را بکش!"
         }
     }
 }

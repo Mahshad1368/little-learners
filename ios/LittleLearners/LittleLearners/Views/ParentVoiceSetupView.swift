@@ -23,7 +23,7 @@ struct ParentVoiceSetupView: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Little Learners")
+                Text(app.language.copy.appName)
                     .font(.system(.title2, design: .rounded, weight: .black))
                     .foregroundStyle(ToyTheme.ink)
                 Text(app.language.copy.parentOnly)

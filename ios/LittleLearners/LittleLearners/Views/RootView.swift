@@ -35,5 +35,6 @@ struct RootView: View {
         }
         .animation(.spring(response: 0.38, dampingFraction: 0.82), value: app.screen)
         .animation(.spring(response: 0.35, dampingFraction: 0.85), value: app.showParentPanel)
+        .environment(\.layoutDirection, app.language.isRTL ? .rightToLeft : .leftToRight)
     }
 }

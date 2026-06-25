@@ -26,7 +26,7 @@ struct WelcomeView: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Little Learners")
+                Text(app.language.copy.appName)
                     .font(.system(.title2, design: .rounded, weight: .black))
                     .foregroundStyle(ToyTheme.ink)
             }
@@ -59,7 +59,7 @@ struct WelcomeView: View {
 
     private var headline: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("hey Baby")
+            Text(app.language.copy.welcomeTitle)
                 .font(.system(size: 52, weight: .black, design: .rounded))
                 .foregroundStyle(ToyTheme.berry)
                 .minimumScaleFactor(0.72)

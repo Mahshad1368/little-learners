@@ -6,15 +6,17 @@ final class LettersGameViewModel: ObservableObject {
     @Published var tokens: [FloatingToken] = []
     @Published var wrongTokenID: UUID?
 
-    var target: LetterItem {
-        MockLearningData.letters[round % MockLearningData.letters.count]
+    func target(for language: AppLanguage) -> LetterItem {
+        let letters = MockLearningData.letters(for: language)
+        return letters[(round * 7) % letters.count]
     }
 
-    func startRound() {
-        let symbols = rotatedLetters()
-        let targetIndex = symbols.firstIndex(where: { $0.symbol == target.symbol }) ?? 0
+    func startRound(language: AppLanguage) {
+        let currentTarget = target(for: language)
+        let symbols = rotatedLetters(language: language)
+        let targetIndex = symbols.firstIndex(where: { $0.symbol == currentTarget.symbol }) ?? 0
         tokens = symbols.enumerated().map { index, item in
-            let isTarget = item.symbol == target.symbol
+            let isTarget = item.symbol == currentTarget.symbol
             let anchor = Self.anchor(for: index, targetIndex: targetIndex, round: round, kindOffset: 1)
             let motion = Self.motion(for: index, round: round, isTarget: isTarget)
             return FloatingToken(
@@ -32,7 +34,7 @@ final class LettersGameViewModel: ObservableObject {
     }
 
     func choose(_ token: FloatingToken, app: AppViewModel) {
-        guard token.label == target.symbol else {
+        guard token.label == target(for: app.language).symbol else {
             wrongTokenID = token.id
             app.wrongAnswer()
             Task {
@@ -47,16 +49,23 @@ final class LettersGameViewModel: ObservableObject {
         Task {
             await app.reward {
                 self.round += 1
-                self.startRound()
-                await app.voiceQueue.playInstruction(action: app.language.copy.catchWord, target: self.target.symbol, language: app.language)
+                self.startRound(language: app.language)
+                await app.voiceQueue.playInstruction(action: app.language.copy.catchWord, target: self.target(for: app.language).symbol, language: app.language)
             }
         }
     }
 
-    private func rotatedLetters() -> [LetterItem] {
-        let letters = MockLearningData.letters
-        let start = round % letters.count
-        return Array(letters[start...]) + Array(letters[..<start])
+    private func rotatedLetters(language: AppLanguage) -> [LetterItem] {
+        let letters = MockLearningData.letters(for: language)
+        let targetIndex = (round * 7) % letters.count
+        var roundLetters = [letters[targetIndex]]
+        for offset in [5, 11, 17, 23, 29] {
+            let item = letters[(targetIndex + round * 3 + offset) % letters.count]
+            if !roundLetters.contains(where: { $0.symbol == item.symbol }) {
+                roundLetters.append(item)
+            }
+        }
+        return roundLetters
     }
 
     private static func anchor(for index: Int, targetIndex: Int, round: Int, kindOffset: Int) -> (x: Double, y: Double) {

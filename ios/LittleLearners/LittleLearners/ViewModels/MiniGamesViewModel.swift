@@ -6,8 +6,19 @@ final class MiniGamesViewModel: ObservableObject {
     @Published var targetLetterIndex = 0
     @Published var wrongLetter: String?
 
-    var targetLetter: LetterItem {
-        MockLearningData.letters[targetLetterIndex % MockLearningData.letters.count]
+    func targetLetter(for language: AppLanguage) -> LetterItem {
+        let letters = MockLearningData.letters(for: language)
+        return letters[(targetLetterIndex * 7) % letters.count]
+    }
+
+    func letterChoices(for language: AppLanguage) -> [String] {
+        let letters = MockLearningData.letters(for: language).map(\.symbol)
+        let index = (targetLetterIndex * 7) % letters.count
+        return [
+            letters[index],
+            letters[(index + targetLetterIndex * 3 + 5) % letters.count],
+            letters[(index + targetLetterIndex * 5 + 11) % letters.count]
+        ]
     }
 
     func select(_ game: MiniGameKind) {

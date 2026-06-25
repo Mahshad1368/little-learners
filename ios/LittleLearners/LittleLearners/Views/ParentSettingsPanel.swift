@@ -8,32 +8,32 @@ struct ParentSettingsPanel: View {
             Capsule()
                 .fill(ToyTheme.ink.opacity(0.18))
                 .frame(width: 44, height: 5)
-            Text("Parent Settings")
+            Text(app.language.copy.parentSettings)
                 .font(.system(.title3, design: .rounded, weight: .black))
                 .foregroundStyle(ToyTheme.ink)
-            Text("\(app.starCount) stars")
+            Text("\(app.starCount) \(app.language.copy.stars)")
                 .font(.system(.callout, design: .rounded, weight: .bold))
                 .foregroundStyle(ToyTheme.ink.opacity(0.62))
 
             languagePicker
                 .padding(.vertical, 4)
 
-            Button(app.isMuted ? "Sound On" : "Mute") {
+            Button(app.isMuted ? app.language.copy.soundOn : app.language.copy.mute) {
                 app.isMuted.toggle()
             }
             .primaryToyButton(color: ToyTheme.banana, foreground: ToyTheme.ink)
 
-            Button("Reset Voice Recordings") {
+            Button(app.language.copy.resetVoiceRecordings) {
                 app.resetVoiceRecordings()
             }
             .primaryToyButton(color: ToyTheme.berry)
 
-            Button("Reset Stars") {
+            Button(app.language.copy.resetStars) {
                 app.resetProgress()
             }
             .primaryToyButton(color: ToyTheme.ink)
 
-            Button("Close") {
+            Button(app.language.copy.close) {
                 app.showParentPanel = false
             }
             .font(.system(.headline, design: .rounded, weight: .black))
@@ -86,6 +86,6 @@ struct ParentCornerButton: View {
                 .frame(width: 48, height: 48)
                 .background(.white.opacity(0.65), in: Circle())
         }
-        .accessibilityLabel("Parent settings")
+        .accessibilityLabel(app.language.copy.parentSettingsAccessibility)
     }
 }

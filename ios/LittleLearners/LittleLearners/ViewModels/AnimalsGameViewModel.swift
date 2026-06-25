@@ -6,15 +6,17 @@ final class AnimalsGameViewModel: ObservableObject {
     @Published var tokens: [FloatingToken] = []
     @Published var wrongTokenID: UUID?
 
-    var target: AnimalItem {
-        MockLearningData.animals[round % MockLearningData.animals.count]
+    func target(for language: AppLanguage) -> AnimalItem {
+        let animals = MockLearningData.animals(for: language)
+        return animals[round % animals.count]
     }
 
-    func startRound() {
-        let animals = rotatedAnimals()
-        let targetIndex = animals.firstIndex(where: { $0.name == target.name }) ?? 0
+    func startRound(language: AppLanguage) {
+        let currentTarget = target(for: language)
+        let animals = rotatedAnimals(language: language)
+        let targetIndex = animals.firstIndex(where: { $0.name == currentTarget.name }) ?? 0
         tokens = animals.enumerated().map { index, item in
-            let isTarget = item.name == target.name
+            let isTarget = item.name == currentTarget.name
             let anchor = Self.anchor(for: index, targetIndex: targetIndex, round: round, kindOffset: 4)
             let motion = Self.motion(for: index, round: round, isTarget: isTarget)
             return FloatingToken(
@@ -32,7 +34,7 @@ final class AnimalsGameViewModel: ObservableObject {
     }
 
     func choose(_ token: FloatingToken, app: AppViewModel) {
-        guard token.label == target.name else {
+        guard token.label == target(for: app.language).name else {
             wrongTokenID = token.id
             app.wrongAnswer()
             Task {
@@ -47,15 +49,16 @@ final class AnimalsGameViewModel: ObservableObject {
         Task {
             await app.reward {
                 self.round += 1
-                self.startRound()
-                await app.voiceQueue.playAnimalInstruction(action: app.language.copy.findWord, animal: self.target, language: app.language)
-                app.soundEffects.playAnimalSound(self.target.soundPrompt)
+                self.startRound(language: app.language)
+                let nextTarget = self.target(for: app.language)
+                await app.voiceQueue.playAnimalInstruction(action: app.language.copy.findWord, animal: nextTarget, language: app.language)
+                app.soundEffects.playAnimalSound(nextTarget.soundPrompt)
             }
         }
     }
 
-    private func rotatedAnimals() -> [AnimalItem] {
-        let animals = MockLearningData.animals
+    private func rotatedAnimals(language: AppLanguage) -> [AnimalItem] {
+        let animals = MockLearningData.animals(for: language)
         let start = round % animals.count
         return Array(animals[start...]) + Array(animals[..<start])
     }

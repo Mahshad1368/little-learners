@@ -6,7 +6,7 @@ struct MiniGamesView: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            GameTopBar(title: "Mini Games")
+            GameTopBar(title: app.language.copy.miniGamesTitle)
             miniTabs
             Group {
                 switch viewModel.activeGame {
@@ -27,7 +27,7 @@ struct MiniGamesView: View {
 
     private var miniTabs: some View {
         HStack(spacing: 8) {
-            ForEach(MockLearningData.miniGames) { game in
+            ForEach(MockLearningData.miniGames(for: app.language)) { game in
                 Button {
                     viewModel.select(game.id)
                 } label: {
@@ -60,7 +60,7 @@ private struct BubblePopGame: View {
 
     var body: some View {
         GeometryReader { proxy in
-            MascotPrompt(mascot: "🫧", prompt: app.language == .fa ? "روی حباب‌ها بزن!" : "Tap the bubbles!", compact: true)
+            MascotPrompt(mascot: "🫧", prompt: app.language.copy.tapBubbles, compact: true)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 20)
 
@@ -83,7 +83,7 @@ private struct BubblePopGame: View {
                     .rotationEffect(.degrees(wrongBubble == index ? (float ? -7 : 7) : 0))
                     .animation(.easeInOut(duration: wrongBubble == index ? 0.18 : 2.8 + Double(index) * 0.16).repeatForever(autoreverses: true), value: float)
                     .position(bubblePosition(index, proxy.size))
-                    .accessibilityLabel("Pop bubble")
+                    .accessibilityLabel(app.language.copy.popBubbleAccessibility)
                 } else {
                     Text("🌸✨")
                         .font(.system(size: 46))
@@ -143,10 +143,10 @@ private struct DragLettersGame: View {
                 .padding(.top, 20)
 
             VStack(spacing: 6) {
-                Text(app.language == .fa ? "هدف" : "Target")
+                Text(app.language.copy.target)
                     .font(.system(.caption, design: .rounded, weight: .black))
                     .foregroundStyle(ToyTheme.berry)
-                Text(viewModel.targetLetter.symbol)
+                Text(viewModel.targetLetter(for: app.language).symbol)
                     .font(.system(size: 46, weight: .black, design: .rounded))
                     .foregroundStyle(ToyTheme.berry)
                     .frame(width: 72, height: 72)
@@ -170,7 +170,7 @@ private struct DragLettersGame: View {
                                 .background(ToyTheme.banana, in: Circle())
                                 .transition(.scale.combined(with: .opacity))
                         }
-                        Text(app.language == .fa ? "اینجا بنداز" : "Drop here")
+                        Text(app.language.copy.dropHere)
                             .font(.system(.headline, design: .rounded, weight: .black))
                     }
                 }
@@ -183,23 +183,21 @@ private struct DragLettersGame: View {
                 }
             }
         }
-        .onChange(of: viewModel.targetLetter.symbol) { _, _ in
+        .onChange(of: viewModel.targetLetter(for: app.language).symbol) { _, _ in
             placedLetter = nil
+        }
+        .onChange(of: app.language) { _, _ in
+            placedLetter = nil
+            dragOffsets.removeAll()
         }
     }
 
     private var dragPrompt: String {
-        app.language == .fa ? "حرف \(viewModel.targetLetter.symbol) را بکش!" : "Drag \(viewModel.targetLetter.symbol)!"
+        app.language.dragPrompt(for: viewModel.targetLetter(for: app.language).symbol)
     }
 
     private var choices: [String] {
-        let letters = MockLearningData.letters.map(\.symbol)
-        let index = viewModel.targetLetterIndex % letters.count
-        return [
-            letters[index],
-            letters[(index + 2) % letters.count],
-            letters[(index + 4) % letters.count]
-        ]
+        viewModel.letterChoices(for: app.language)
     }
 
     private func draggableLetter(_ letter: String, index: Int, size: CGSize, dropZone: CGRect) -> some View {
@@ -208,9 +206,9 @@ private struct DragLettersGame: View {
 
         return Text(letter)
             .font(.system(size: 58, weight: .black, design: .rounded))
-            .foregroundStyle(letter == viewModel.targetLetter.symbol ? ToyTheme.berry : ToyTheme.ink)
+            .foregroundStyle(letter == viewModel.targetLetter(for: app.language).symbol ? ToyTheme.berry : ToyTheme.ink)
             .frame(width: 118, height: 104)
-            .background(viewModel.wrongLetter == letter ? Color.red.opacity(0.82) : letter == viewModel.targetLetter.symbol ? ToyTheme.banana : .white.opacity(0.72), in: RoundedRectangle(cornerRadius: 32, style: .continuous))
+            .background(viewModel.wrongLetter == letter ? Color.red.opacity(0.82) : letter == viewModel.targetLetter(for: app.language).symbol ? ToyTheme.banana : .white.opacity(0.72), in: RoundedRectangle(cornerRadius: 32, style: .continuous))
             .shadow(color: ToyTheme.ink.opacity(0.16), radius: 14, x: 0, y: 8)
             .position(x: origin.x + offset.width, y: origin.y + offset.height)
             .gesture(
@@ -221,7 +219,7 @@ private struct DragLettersGame: View {
                     .onEnded { value in
                         let finalPoint = CGPoint(x: origin.x + value.translation.width, y: origin.y + value.translation.height)
                         if dropZone.contains(finalPoint) {
-                            if letter == viewModel.targetLetter.symbol {
+                            if letter == viewModel.targetLetter(for: app.language).symbol {
                                 placedLetter = letter
                                 viewModel.reward(app: app)
                             } else {
@@ -233,7 +231,7 @@ private struct DragLettersGame: View {
                         }
                     }
             )
-            .accessibilityLabel("Drag \(letter)")
+            .accessibilityLabel(app.language.dragPrompt(for: letter))
     }
 
     private func letterPosition(_ index: Int, _ size: CGSize) -> CGPoint {
@@ -252,7 +250,7 @@ private struct CatchFishGame: View {
 
     var body: some View {
         GeometryReader { proxy in
-            MascotPrompt(mascot: "🐠", prompt: app.language == .fa ? "ماهی را بگیر!" : "Catch the Fish!", compact: true)
+            MascotPrompt(mascot: "🐠", prompt: app.language.copy.catchFish, compact: true)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 20)
 
@@ -284,7 +282,7 @@ private struct CatchFishGame: View {
                 .rotationEffect(.degrees(move ? 11 : -11))
                 .scaleEffect(move ? 1.06 : 0.96)
                 .animation(.easeInOut(duration: 1.9).repeatForever(autoreverses: true), value: move)
-                .accessibilityLabel("Catch the fish")
+                .accessibilityLabel(app.language.copy.catchFishAccessibility)
             }
         }
         .onAppear { move = true }
