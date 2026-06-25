@@ -33,8 +33,16 @@ struct MiniGamesView: View {
                 Button {
                     viewModel.select(game.id)
                 } label: {
-                    Text(game.emoji)
-                        .font(.system(size: 34))
+                    Group {
+                        if game.id == .catchStar {
+                            CuteRedFish()
+                                .scaleEffect(0.34)
+                                .frame(width: 54, height: 44)
+                        } else {
+                            Text(game.emoji)
+                                .font(.system(size: 34))
+                        }
+                    }
                         .frame(maxWidth: .infinity, minHeight: 68)
                         .background(viewModel.activeGame == game.id ? ToyTheme.banana : .white.opacity(0.62), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
                 }
@@ -260,7 +268,7 @@ private struct CatchFishGame: View {
 
     var body: some View {
         GeometryReader { proxy in
-            MascotPrompt(mascot: "🐟", prompt: app.language == .fa ? "ماهی را بگیر!" : "Catch the Fish!", compact: true)
+            MascotPrompt(mascot: "🐠", prompt: app.language == .fa ? "ماهی را بگیر!" : "Catch the Fish!", compact: true)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 20)
 
@@ -288,8 +296,10 @@ private struct CatchFishGame: View {
                 }
                 .buttonStyle(.plain)
                 .position(fishPosition(proxy.size))
-                .rotationEffect(.degrees(move ? 8 : -8))
-                .animation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true), value: move)
+                .offset(x: move ? 58 : -48, y: move ? -42 : 38)
+                .rotationEffect(.degrees(move ? 11 : -11))
+                .scaleEffect(move ? 1.06 : 0.96)
+                .animation(.easeInOut(duration: 1.9).repeatForever(autoreverses: true), value: move)
                 .accessibilityLabel("Catch the fish")
             }
         }
@@ -310,9 +320,7 @@ private struct CatchFishGame: View {
     private func fishPosition(_ size: CGSize) -> CGPoint {
         let positions: [(CGFloat, CGFloat)] = [(0.22, 0.42), (0.76, 0.58), (0.54, 0.32), (0.30, 0.72)]
         let point = positions[swimRound % positions.count]
-        let waveX: CGFloat = move ? 46 : -36
-        let waveY: CGFloat = move ? -34 : 38
-        return CGPoint(x: 90 + point.0 * max(size.width - 180, 1) + waveX, y: 170 + point.1 * max(size.height - 300, 1) + waveY)
+        return CGPoint(x: 90 + point.0 * max(size.width - 180, 1), y: 170 + point.1 * max(size.height - 300, 1))
     }
 }
 
@@ -320,13 +328,23 @@ private struct CuteRedFish: View {
     var body: some View {
         ZStack {
             Capsule()
-                .fill(LinearGradient(colors: [.red, .orange, ToyTheme.banana], startPoint: .leading, endPoint: .trailing))
+                .fill(LinearGradient(colors: [Color(red: 1.0, green: 0.06, blue: 0.24), Color(red: 1.0, green: 0.25, blue: 0.12), ToyTheme.banana], startPoint: .leading, endPoint: .trailing))
                 .frame(width: 92, height: 56)
             Triangle()
-                .fill(.red)
+                .fill(Color(red: 1.0, green: 0.06, blue: 0.24))
                 .frame(width: 36, height: 42)
                 .rotationEffect(.degrees(-90))
                 .offset(x: -56)
+            Capsule()
+                .fill(ToyTheme.banana.opacity(0.9))
+                .frame(width: 28, height: 14)
+                .rotationEffect(.degrees(-16))
+                .offset(x: -4, y: -30)
+            Capsule()
+                .fill(ToyTheme.banana.opacity(0.9))
+                .frame(width: 28, height: 14)
+                .rotationEffect(.degrees(18))
+                .offset(x: -8, y: 30)
             Circle()
                 .fill(ToyTheme.ink)
                 .frame(width: 8, height: 8)

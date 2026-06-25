@@ -33,22 +33,21 @@ const STARS_KEY = "little-learners-toy-stars";
 const MUTE_KEY = "little-learners-muted";
 const WELCOMED_KEY = "little-learners-welcomed-this-session";
 
-const letterSwim = [
-  { x: ["4vw", "30vw", "12vw", "64vw", "8vw"], y: ["12vh", "24vh", "44vh", "20vh", "30vh"], rotate: [-8, 14, -6, 18, -10], scale: [1, 1.18, 0.9, 1.12, 1], duration: 3.4 },
-  { x: ["56vw", "74vw", "38vw", "16vw", "70vw"], y: ["18vh", "44vh", "30vh", "58vh", "22vh"], rotate: [5, -13, 9, -4, 11], scale: [1, 0.86, 1.16, 0.92, 1], duration: 3.8 },
-  { x: ["20vw", "48vw", "72vw", "30vw", "56vw"], y: ["54vh", "38vh", "58vh", "26vh", "48vh"], rotate: [-4, 16, -11, 7, -2], scale: [1, 1.2, 0.94, 1.08, 1], duration: 3.1 },
-  { x: ["68vw", "44vw", "78vw", "12vw", "46vw"], y: ["52vh", "20vh", "34vh", "46vh", "16vh"], rotate: [9, -6, 13, -8, 5], scale: [1, 0.9, 1.14, 0.96, 1], duration: 3.6 },
-  { x: ["32vw", "10vw", "40vw", "74vw", "22vw"], y: ["28vh", "62vh", "48vh", "30vh", "56vh"], rotate: [2, -14, 4, 12, -7], scale: [1, 1.16, 0.88, 1.1, 1], duration: 3.9 },
-  { x: ["76vw", "62vw", "18vw", "50vw", "80vw"], y: ["14vh", "64vh", "18vh", "44vh", "26vh"], rotate: [-8, 7, -5, 15, -9], scale: [1, 0.84, 1.18, 0.92, 1], duration: 3.3 }
+const mainChoiceLayouts = [
+  { left: "12%", top: "28%", x: [0, 42, -18, 28, 0], y: [0, -28, 24, -12, 0], rotate: [-6, 9, -4, 7, -6], duration: 4.2 },
+  { left: "58%", top: "26%", x: [0, -36, 24, -18, 0], y: [0, 22, -26, 14, 0], rotate: [5, -8, 6, -5, 5], duration: 4.6 },
+  { left: "25%", top: "52%", x: [0, 34, -28, 18, 0], y: [0, 28, -18, 24, 0], rotate: [-3, 8, -7, 4, -3], duration: 4.4 },
+  { left: "56%", top: "56%", x: [0, -32, 26, -24, 0], y: [0, -24, 22, -14, 0], rotate: [4, -7, 8, -5, 4], duration: 4.8 },
+  { left: "40%", top: "74%", x: [0, 28, -34, 20, 0], y: [0, -30, 16, -22, 0], rotate: [-5, 6, -9, 5, -5], duration: 4.5 },
+  { left: "72%", top: "42%", x: [0, -38, 20, -28, 0], y: [0, 18, -30, 12, 0], rotate: [6, -9, 5, -6, 6], duration: 4.7 }
 ];
 
-const animalPaths = [
-  { x: ["3vw", "36vw", "12vw", "60vw", "6vw"], y: ["18vh", "34vh", "54vh", "26vh", "40vh"], rotate: [0, 12, -10, 6, -4], scale: [1, 1.12, 0.92, 1.08, 1], duration: 3.7 },
-  { x: ["60vw", "74vw", "44vw", "16vw", "68vw"], y: ["16vh", "44vh", "24vh", "56vh", "20vh"], rotate: [0, -10, 8, -6, 4], scale: [1, 0.9, 1.14, 0.94, 1], duration: 4.1 },
-  { x: ["16vw", "50vw", "76vw", "30vw", "58vw"], y: ["58vh", "38vh", "60vh", "24vh", "46vh"], rotate: [0, 14, -9, 7, -3], scale: [1, 1.18, 0.9, 1.06, 1], duration: 3.4 },
-  { x: ["70vw", "36vw", "66vw", "10vw", "44vw"], y: ["48vh", "62vh", "30vh", "44vh", "14vh"], rotate: [0, -8, 11, -7, 5], scale: [1, 0.88, 1.16, 0.9, 1], duration: 3.9 },
-  { x: ["42vw", "8vw", "36vw", "74vw", "26vw"], y: ["26vh", "52vh", "20vh", "40vh", "58vh"], rotate: [0, 13, -6, 9, -8], scale: [1, 1.14, 0.94, 1.1, 1], duration: 4.2 },
-  { x: ["78vw", "52vw", "20vw", "48vw", "82vw"], y: ["24vh", "56vh", "36vh", "22vh", "48vh"], rotate: [0, -11, 7, -5, 9], scale: [1, 0.86, 1.2, 0.92, 1], duration: 3.5 }
+const miniChoiceLayouts = [
+  { left: "10%", top: "34%" },
+  { left: "68%", top: "34%" },
+  { left: "22%", top: "58%" },
+  { left: "62%", top: "60%" },
+  { left: "42%", top: "46%" }
 ];
 
 const bubblePositions = [
@@ -74,6 +73,14 @@ function triggerHaptic(pattern: number | number[] = 18) {
 
 function formatDragPrompt(language: Language, target: string) {
   return language === "fa" ? `حرف ${target} را بکش!` : `Drag ${target}!`;
+}
+
+function formatCatchPrompt(language: Language, target: string) {
+  return language === "fa" ? `${target} را بگیر!` : `Catch ${target}!`;
+}
+
+function formatFindPrompt(language: Language, target: string) {
+  return language === "fa" ? `${target} را پیدا کن!` : `Find ${target}!`;
 }
 
 export function ToddlerLetterGame() {
@@ -342,10 +349,10 @@ export function ToddlerLetterGame() {
           <WelcomeToy key="welcome" onStart={startWelcome} t={t} />
         ) : null}
         {mode === "letters" ? (
-          <LettersMode key="letters" target={targetLetter} letters={floatingLetters} wrongChoice={feedback.wrongChoice} celebrating={feedback.celebrating} onPick={chooseLetter} t={t} />
+          <LettersMode key="letters" target={targetLetter} letters={floatingLetters} language={language} wrongChoice={feedback.wrongChoice} celebrating={feedback.celebrating} onPick={chooseLetter} t={t} />
         ) : null}
         {mode === "animals" ? (
-          <AnimalsMode key="animals" target={targetAnimal.name} animals={visibleAnimals} wrongChoice={feedback.wrongChoice} celebrating={feedback.celebrating} onPick={chooseAnimal} t={t} />
+          <AnimalsMode key="animals" target={targetAnimal.name} animals={visibleAnimals} language={language} wrongChoice={feedback.wrongChoice} celebrating={feedback.celebrating} onPick={chooseAnimal} t={t} />
         ) : null}
         {mode === "minis" ? (
           <MiniGamesMode
@@ -732,7 +739,7 @@ function HomeToy({ onChoose, mascotHappy, t }: { onChoose: (mode: Mode) => void;
   );
 }
 
-function LettersMode({ target, letters, wrongChoice, celebrating, onPick, t }: { target: string; letters: readonly string[]; wrongChoice: string | null; celebrating: boolean; onPick: (letter: string) => void; t: Translate }) {
+function LettersMode({ target, letters, language, wrongChoice, celebrating, onPick, t }: { target: string; letters: readonly string[]; language: Language; wrongChoice: string | null; celebrating: boolean; onPick: (letter: string) => void; t: Translate }) {
   const letterColors = [
     "bg-white/72 text-ink dark:bg-white/12 dark:text-white",
     "bg-mint/65 text-ink",
@@ -744,27 +751,29 @@ function LettersMode({ target, letters, wrongChoice, celebrating, onPick, t }: {
 
   return (
     <motion.div className="relative z-10 h-[calc(100svh-10rem)] min-h-[34rem]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <MascotPrompt mascot={celebrating ? mascotFaces.sparkle : mascotFaces.happy} prompt={`${t("game.catch")} ${target}!`} celebrating={celebrating} />
+      <MascotPrompt mascot={celebrating ? mascotFaces.sparkle : mascotFaces.happy} prompt={formatCatchPrompt(language, target)} celebrating={celebrating} />
       {letters.map((letter, index) => {
-        const path = letterSwim[index % letterSwim.length];
+        const path = mainChoiceLayouts[index % mainChoiceLayouts.length];
         const isTarget = letter === target;
         return (
           <motion.button
             key={`${letter}-${index}-${target}`}
             aria-label={`${t("game.catch")} ${letter}`}
             className={cn(
-              "absolute grid h-28 w-28 place-items-center rounded-full text-6xl font-black shadow-lift backdrop-blur sm:h-36 sm:w-36 sm:text-8xl",
+              "absolute grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-6xl font-black shadow-lift backdrop-blur sm:h-36 sm:w-36 sm:text-8xl",
               isTarget ? "z-10 bg-banana/95 text-berry ring-8 ring-banana/45" : letterColors[index % letterColors.length],
               wrongChoice === letter && "z-20 bg-red-400 text-white ring-8 ring-red-200"
             )}
-            initial={{ x: path.x[0], y: path.y[0] }}
+            style={{ left: path.left, top: path.top }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={
               wrongChoice === letter
-                ? { x: [path.x[0], `calc(${path.x[0]} + 14px)`, `calc(${path.x[0]} - 12px)`, path.x[0]], y: path.y[0] }
+                ? { x: [0, 14, -12, 0], y: 0, opacity: 1 }
                 : {
                     x: path.x,
                     y: path.y,
                     rotate: path.rotate,
+                    opacity: 1,
                     scale: isTarget && celebrating ? [1, 1.45, 0.78, 1] : isTarget ? [1, 1.16, 1] : [1, 1.05, 1],
                     boxShadow: isTarget ? ["0 18px 45px rgba(255, 209, 102, 0.35)", "0 26px 70px rgba(255, 122, 168, 0.5)", "0 18px 45px rgba(255, 209, 102, 0.35)"] : undefined
                   }
@@ -782,32 +791,34 @@ function LettersMode({ target, letters, wrongChoice, celebrating, onPick, t }: {
   );
 }
 
-function AnimalsMode({ target, animals, wrongChoice, celebrating, onPick, t }: { target: string; animals: readonly ToddlerAnimal[]; wrongChoice: string | null; celebrating: boolean; onPick: (name: string, sound: string) => void; t: Translate }) {
+function AnimalsMode({ target, animals, language, wrongChoice, celebrating, onPick, t }: { target: string; animals: readonly ToddlerAnimal[]; language: Language; wrongChoice: string | null; celebrating: boolean; onPick: (name: string, sound: string) => void; t: Translate }) {
   const animalColors = ["bg-white/72", "bg-mint/60", "bg-sky/50", "bg-leaf/50", "bg-banana/45", "bg-white/72"];
 
   return (
     <motion.div className="relative z-10 h-[calc(100svh-10rem)] min-h-[34rem]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <MascotPrompt mascot={celebrating ? mascotFaces.sparkle : "🐯"} prompt={`${t("game.find")} ${target}!`} celebrating={celebrating} />
+      <MascotPrompt mascot={celebrating ? mascotFaces.sparkle : "🐯"} prompt={formatFindPrompt(language, target)} celebrating={celebrating} />
       {animals.map((animal, index) => {
-        const path = animalPaths[index % animalPaths.length];
+        const path = mainChoiceLayouts[index % mainChoiceLayouts.length];
         const isTarget = animal.name === target;
         return (
           <motion.button
             key={`${animal.name}-${target}`}
             aria-label={`${t("game.find")} ${animal.name}`}
             className={cn(
-              "absolute grid h-28 w-28 place-items-center rounded-[2.25rem] text-7xl shadow-lift backdrop-blur sm:h-40 sm:w-40 sm:text-8xl",
+              "absolute grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[2.25rem] text-7xl shadow-lift backdrop-blur sm:h-40 sm:w-40 sm:text-8xl",
               isTarget ? "z-10 bg-banana/95 ring-8 ring-banana/45" : animalColors[index % animalColors.length],
               wrongChoice === animal.name && "z-20 bg-red-400 ring-8 ring-red-200"
             )}
-            initial={{ x: path.x[0], y: path.y[0] }}
+            style={{ left: path.left, top: path.top }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={
               wrongChoice === animal.name
-                ? { rotate: [0, -8, 8, -5, 0] }
+                ? { x: [0, -10, 10, -6, 0], rotate: [0, -8, 8, -5, 0], opacity: 1 }
                 : {
                     x: path.x,
                     y: path.y,
                     rotate: isTarget && celebrating ? [0, -12, 12, 0] : [0, 4, -4, 0],
+                    opacity: 1,
                     scale: isTarget && celebrating ? [1, 1.36, 1] : isTarget ? [1, 1.15, 1] : [1, 1.04, 1],
                     boxShadow: isTarget ? ["0 18px 45px rgba(255, 209, 102, 0.35)", "0 28px 76px rgba(94, 234, 212, 0.52)", "0 18px 45px rgba(255, 209, 102, 0.35)"] : undefined
                   }
@@ -862,7 +873,9 @@ function MiniGamesMode({
             type="button"
             aria-label={game.title}
           >
-            <span aria-hidden="true">{game.emoji}</span>
+            <span className="grid place-items-center" aria-hidden="true">
+              {game.id === "star" ? <CuteRedFish small /> : game.emoji}
+            </span>
           </motion.button>
         ))}
       </div>
@@ -921,7 +934,7 @@ function BubblePop({ onReward, t }: { onReward: () => void; t: Translate }) {
             <motion.button
               key={id}
               className={cn(
-                "absolute grid h-28 w-28 place-items-center rounded-full bg-white/60 text-5xl shadow-lift outline-none backdrop-blur focus:ring-8 focus:ring-banana/40 sm:h-36 sm:w-36",
+                "absolute grid h-28 w-28 place-items-center rounded-full bg-white/85 text-6xl shadow-lift ring-2 ring-white/70 outline-none backdrop-blur focus:ring-8 focus:ring-banana/40 sm:h-36 sm:w-36 sm:text-7xl",
                 position,
                 wrongBubble === id && "ring-8 ring-berry/30"
               )}
@@ -1031,7 +1044,7 @@ function DragLetters({
         {successId ? <PopBurst key={`letter-success-${successId}`} position="left-1/2 top-1/2" /> : null}
       </AnimatePresence>
       {choices.map((letter, index) => {
-        const path = letterSwim[(index + 2) % letterSwim.length];
+        const path = miniChoiceLayouts[index % miniChoiceLayouts.length];
         return (
           <motion.button
             key={`${target}-${letter}`}
@@ -1040,13 +1053,14 @@ function DragLetters({
               letter === target ? "bg-banana/90 text-berry ring-8 ring-banana/45" : "bg-white/70 text-sky",
               wrongChoice === letter && "bg-red-400 text-white ring-8 ring-red-200"
             )}
-            initial={{ x: path.x[0], y: path.y[0] }}
+            style={{ left: path.left, top: path.top }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={
               wrongChoice === letter
-                ? { x: [path.x[0], `calc(${path.x[0]} + 12px)`, path.x[0]] }
-                : { x: path.x, y: path.y, rotate: path.rotate, scale: letter === target ? [1, 1.14, 1] : [1, 1.04, 1] }
+                ? { x: [0, 12, -10, 0], opacity: 1 }
+                : { x: [0, 18, -14, 10, 0], y: [0, -18, 12, -10, 0], rotate: [-4, 7, -6, 4, -4], opacity: 1, scale: letter === target ? [1, 1.14, 1] : [1, 1.04, 1] }
             }
-            transition={wrongChoice === letter ? { duration: 0.4 } : { duration: path.duration, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+            transition={wrongChoice === letter ? { duration: 0.4 } : { duration: 4.2 + index * 0.25, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
             drag
             dragSnapToOrigin
             dragElastic={0.14}
@@ -1068,9 +1082,9 @@ function CatchFish({ onReward, t }: { onReward: () => void; t: Translate }) {
   const [caught, setCaught] = useState(false);
   const [swimRound, setSwimRound] = useState(0);
   const paths = [
-    { x: ["8vw", "58vw", "28vw", "68vw", "16vw"], y: ["16vh", "22vh", "48vh", "34vh", "56vh"], rotate: [-5, 8, -10, 6, -4] },
-    { x: ["62vw", "18vw", "72vw", "34vw", "54vw"], y: ["54vh", "34vh", "18vh", "58vh", "28vh"], rotate: [6, -10, 8, -7, 4] },
-    { x: ["26vw", "72vw", "52vw", "10vw", "64vw"], y: ["22vh", "42vh", "60vh", "36vh", "18vh"], rotate: [-4, 10, 5, -9, 7] }
+    { left: "16%", top: "34%", x: [0, 220, 90, 340, 0], y: [0, -36, 150, 58, 0], rotate: [-8, 10, -12, 8, -8] },
+    { left: "62%", top: "62%", x: [0, -260, 80, -180, 0], y: [0, -128, -260, 42, 0], rotate: [8, -12, 10, -8, 8] },
+    { left: "34%", top: "28%", x: [0, 300, 160, -90, 0], y: [0, 120, 260, 90, 0], rotate: [-6, 12, 7, -10, -6] }
   ];
   const path = paths[swimRound % paths.length];
 
@@ -1096,19 +1110,20 @@ function CatchFish({ onReward, t }: { onReward: () => void; t: Translate }) {
         {!caught ? (
           <motion.button
             key={`fish-${swimRound}`}
-            className="absolute grid h-32 w-44 place-items-center rounded-full bg-white/55 shadow-lift outline-none backdrop-blur focus:ring-8 focus:ring-banana/40 sm:h-40 sm:w-56"
-            initial={{ opacity: 0, x: path.x[0], y: path.y[0], scale: 0.7 }}
+            className="absolute grid h-36 w-52 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/65 shadow-lift outline-none backdrop-blur focus:ring-8 focus:ring-banana/40 sm:h-44 sm:w-64"
+            style={{ left: path.left, top: path.top }}
+            initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, x: path.x, y: path.y, rotate: path.rotate, scale: [1, 1.06, 0.98, 1.04, 1] }}
             exit={{ opacity: 0, scale: 0.2, rotate: 24 }}
-            transition={{ duration: 5.8, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+            transition={{ duration: 4.8, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
             whileTap={{ scale: 0.8 }}
             onClick={catchFish}
             type="button"
             aria-label={t("game.catchFish")}
           >
             <CuteRedFish />
-            <span className="pointer-events-none absolute -right-4 top-1 text-2xl">🫧</span>
-            <span className="pointer-events-none absolute -right-8 top-8 text-xl">🫧</span>
+            <motion.span className="pointer-events-none absolute right-2 top-2 text-2xl" animate={{ x: [0, 14, 24], y: [0, -10, -24], opacity: [0, 1, 0] }} transition={{ duration: 1.4, repeat: Infinity }}>🫧</motion.span>
+            <motion.span className="pointer-events-none absolute right-8 top-9 text-xl" animate={{ x: [0, 18, 30], y: [0, -14, -30], opacity: [0, 1, 0] }} transition={{ duration: 1.7, repeat: Infinity, delay: 0.35 }}>🫧</motion.span>
           </motion.button>
         ) : (
           <motion.div
@@ -1157,15 +1172,15 @@ function PopBurst({ position }: { position: string }) {
   );
 }
 
-function CuteRedFish() {
+function CuteRedFish({ small = false }: { small?: boolean }) {
   return (
-    <span className="relative block h-20 w-32" aria-hidden="true">
-      <span className="absolute left-8 top-4 h-14 w-20 rounded-[60%_48%_48%_60%] bg-gradient-to-br from-[#ff5a70] via-[#ff7a59] to-[#ffb000] shadow-soft" />
-      <span className="absolute left-1 top-7 h-0 w-0 border-y-[18px] border-r-[34px] border-y-transparent border-r-[#ff5a70]" />
-      <span className="absolute right-2 top-8 h-3 w-3 rounded-full bg-ink" />
-      <span className="absolute right-0 top-11 h-2 w-5 rounded-full bg-white/75" />
-      <span className="absolute left-16 top-0 h-6 w-8 rotate-[-14deg] rounded-full bg-[#ffd166]/80" />
-      <span className="absolute left-14 bottom-0 h-6 w-8 rotate-[18deg] rounded-full bg-[#ffd166]/80" />
+    <span className={cn("relative block", small ? "h-10 w-16" : "h-24 w-40")} aria-hidden="true">
+      <span className={cn("absolute rounded-[60%_48%_48%_60%] bg-gradient-to-br from-[#ff174d] via-[#ff4d2e] to-[#ff9f1c] shadow-soft", small ? "left-4 top-2 h-7 w-10" : "left-10 top-5 h-16 w-24")} />
+      <span className={cn("absolute h-0 w-0 border-y-transparent", small ? "left-0 top-[14px] border-y-[10px] border-r-[19px] border-r-[#ff174d]" : "left-1 top-9 border-y-[22px] border-r-[42px] border-r-[#ff174d]")} />
+      <span className={cn("absolute rounded-full bg-ink", small ? "right-1 top-4 h-1.5 w-1.5" : "right-3 top-10 h-3.5 w-3.5")} />
+      <span className={cn("absolute rounded-full bg-white/80", small ? "right-0 top-6 h-1 w-3" : "right-0 top-14 h-2 w-6")} />
+      <span className={cn("absolute rotate-[-16deg] rounded-full bg-[#ffd166]/90", small ? "left-8 top-0 h-3 w-4" : "left-20 top-0 h-7 w-10")} />
+      <span className={cn("absolute rotate-[18deg] rounded-full bg-[#ffd166]/90", small ? "left-7 bottom-0 h-3 w-4" : "left-18 bottom-0 h-7 w-10")} />
     </span>
   );
 }

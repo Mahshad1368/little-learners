@@ -21,5 +21,5 @@ export const miniGames = [
   { id: "bubbles", title: "Bubble Pop", emoji: "🫧" },
   { id: "monster", title: "Feed Monster", emoji: "🍓" },
   { id: "fishing", title: "Drag Letters", emoji: "🔤" },
-  { id: "star", title: "Catch Fish", emoji: "🐟" }
+  { id: "star", title: "Catch Fish", emoji: "🐠" }
 ] as const;

@@ -14,7 +14,7 @@ enum MockLearningData {
         MiniGameItem(id: .bubblePop, title: "Bubble Pop", emoji: "🫧"),
         MiniGameItem(id: .feedMonster, title: "Feed the Monster", emoji: "👾"),
         MiniGameItem(id: .fishingLetters, title: "Drag Letters", emoji: "🔤"),
-        MiniGameItem(id: .catchStar, title: "Catch the Fish", emoji: "🐟")
+        MiniGameItem(id: .catchStar, title: "Catch the Fish", emoji: "🐠")
     ]
 
     static let encouragementFallbacks = [
