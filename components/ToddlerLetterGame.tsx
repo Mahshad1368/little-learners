@@ -8,7 +8,7 @@ import { Language, useI18n } from "@/utils/useI18n";
 import { useSoundEffects } from "@/utils/useSoundEffects";
 import { useVoiceQueue } from "@/utils/useVoiceQueue";
 
-type Mode = "home" | "letters" | "animals" | "minis";
+type Mode = "welcome" | "home" | "letters" | "animals" | "minis";
 type MiniGameId = (typeof miniGames)[number]["id"];
 type ToddlerAnimal = (typeof toddlerAnimals)[number];
 type VoiceClipKind = "encouragement";
@@ -31,23 +31,24 @@ const SETUP_VERSION = "4";
 const VOICE_KEY = "little-learners-parent-voice-clips";
 const STARS_KEY = "little-learners-toy-stars";
 const MUTE_KEY = "little-learners-muted";
+const WELCOMED_KEY = "little-learners-welcomed-this-session";
 
 const letterSwim = [
-  { x: ["4vw", "28vw", "12vw"], y: ["12vh", "22vh", "44vh"], rotate: [-8, 8, -4], duration: 8 },
-  { x: ["56vw", "70vw", "38vw"], y: ["18vh", "42vh", "30vh"], rotate: [5, -9, 6], duration: 9 },
-  { x: ["20vw", "48vw", "72vw"], y: ["54vh", "38vh", "58vh"], rotate: [-4, 10, -7], duration: 10 },
-  { x: ["68vw", "44vw", "78vw"], y: ["52vh", "20vh", "34vh"], rotate: [9, -4, 7], duration: 8.8 },
-  { x: ["32vw", "10vw", "40vw"], y: ["28vh", "62vh", "48vh"], rotate: [2, -10, 3], duration: 9.6 },
-  { x: ["76vw", "62vw", "18vw"], y: ["14vh", "64vh", "18vh"], rotate: [-8, 5, -6], duration: 10.4 }
+  { x: ["4vw", "30vw", "12vw", "64vw", "8vw"], y: ["12vh", "24vh", "44vh", "20vh", "30vh"], rotate: [-8, 14, -6, 18, -10], scale: [1, 1.18, 0.9, 1.12, 1], duration: 3.4 },
+  { x: ["56vw", "74vw", "38vw", "16vw", "70vw"], y: ["18vh", "44vh", "30vh", "58vh", "22vh"], rotate: [5, -13, 9, -4, 11], scale: [1, 0.86, 1.16, 0.92, 1], duration: 3.8 },
+  { x: ["20vw", "48vw", "72vw", "30vw", "56vw"], y: ["54vh", "38vh", "58vh", "26vh", "48vh"], rotate: [-4, 16, -11, 7, -2], scale: [1, 1.2, 0.94, 1.08, 1], duration: 3.1 },
+  { x: ["68vw", "44vw", "78vw", "12vw", "46vw"], y: ["52vh", "20vh", "34vh", "46vh", "16vh"], rotate: [9, -6, 13, -8, 5], scale: [1, 0.9, 1.14, 0.96, 1], duration: 3.6 },
+  { x: ["32vw", "10vw", "40vw", "74vw", "22vw"], y: ["28vh", "62vh", "48vh", "30vh", "56vh"], rotate: [2, -14, 4, 12, -7], scale: [1, 1.16, 0.88, 1.1, 1], duration: 3.9 },
+  { x: ["76vw", "62vw", "18vw", "50vw", "80vw"], y: ["14vh", "64vh", "18vh", "44vh", "26vh"], rotate: [-8, 7, -5, 15, -9], scale: [1, 0.84, 1.18, 0.92, 1], duration: 3.3 }
 ];
 
 const animalPaths = [
-  { x: ["3vw", "34vw", "12vw"], y: ["18vh", "32vh", "54vh"], duration: 9 },
-  { x: ["60vw", "72vw", "44vw"], y: ["16vh", "44vh", "24vh"], duration: 10 },
-  { x: ["16vw", "50vw", "76vw"], y: ["58vh", "38vh", "60vh"], duration: 11 },
-  { x: ["70vw", "36vw", "66vw"], y: ["48vh", "62vh", "30vh"], duration: 9.5 },
-  { x: ["42vw", "8vw", "36vw"], y: ["26vh", "52vh", "20vh"], duration: 10.5 },
-  { x: ["78vw", "52vw", "20vw"], y: ["24vh", "56vh", "36vh"], duration: 11.5 }
+  { x: ["3vw", "36vw", "12vw", "60vw", "6vw"], y: ["18vh", "34vh", "54vh", "26vh", "40vh"], rotate: [0, 12, -10, 6, -4], scale: [1, 1.12, 0.92, 1.08, 1], duration: 3.7 },
+  { x: ["60vw", "74vw", "44vw", "16vw", "68vw"], y: ["16vh", "44vh", "24vh", "56vh", "20vh"], rotate: [0, -10, 8, -6, 4], scale: [1, 0.9, 1.14, 0.94, 1], duration: 4.1 },
+  { x: ["16vw", "50vw", "76vw", "30vw", "58vw"], y: ["58vh", "38vh", "60vh", "24vh", "46vh"], rotate: [0, 14, -9, 7, -3], scale: [1, 1.18, 0.9, 1.06, 1], duration: 3.4 },
+  { x: ["70vw", "36vw", "66vw", "10vw", "44vw"], y: ["48vh", "62vh", "30vh", "44vh", "14vh"], rotate: [0, -8, 11, -7, 5], scale: [1, 0.88, 1.16, 0.9, 1], duration: 3.9 },
+  { x: ["42vw", "8vw", "36vw", "74vw", "26vw"], y: ["26vh", "52vh", "20vh", "40vh", "58vh"], rotate: [0, 13, -6, 9, -8], scale: [1, 1.14, 0.94, 1.1, 1], duration: 4.2 },
+  { x: ["78vw", "52vw", "20vw", "48vw", "82vw"], y: ["24vh", "56vh", "36vh", "22vh", "48vh"], rotate: [0, -11, 7, -5, 9], scale: [1, 0.86, 1.2, 0.92, 1], duration: 3.5 }
 ];
 
 const bubblePositions = [
@@ -59,9 +60,25 @@ const bubblePositions = [
   "left-[48%] top-[64%]"
 ];
 
+const localizedLetters: Record<Language, readonly string[]> = {
+  en: toddlerLetters,
+  de: toddlerLetters,
+  fa: ["آ", "ب", "پ", "ت", "ث", "ج", "چ", "ح"]
+};
+
+function triggerHaptic(pattern: number | number[] = 18) {
+  if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+    navigator.vibrate(pattern);
+  }
+}
+
+function formatDragPrompt(language: Language, target: string) {
+  return language === "fa" ? `حرف ${target} را بکش!` : `Drag ${target}!`;
+}
+
 export function ToddlerLetterGame() {
   const { dir, language, setLanguage, t } = useI18n();
-  const [mode, setMode] = useState<Mode>("home");
+  const [mode, setMode] = useState<Mode>("welcome");
   const [round, setRound] = useState(0);
   const [stars, setStars] = useState(0);
   const [feedback, setFeedback] = useState<GameFeedback>({ wrongChoice: null, celebrationId: 0, celebrating: false });
@@ -75,17 +92,18 @@ export function ToddlerLetterGame() {
   const voiceQueue = useVoiceQueue(muted);
   const { playBuzzer, playCheer, playClap, playPop, playSparkle } = useSoundEffects(muted);
 
-  const targetLetter = toddlerLetters[round % toddlerLetters.length];
+  const letterPool = localizedLetters[language] ?? localizedLetters.en;
+  const targetLetter = letterPool[round % letterPool.length];
   const targetAnimal = toddlerAnimals[round % toddlerAnimals.length];
   const starSlots = Array.from({ length: 8 }, (_, index) => index < Math.min(stars, 8));
   const cheer = cheers[(round + stars) % cheers.length];
   const encouragementClips = voiceClips.filter((clip) => clip.kind === "encouragement");
 
   const floatingLetters = useMemo(() => {
-    const start = round % toddlerLetters.length;
-    const pool = Array.from({ length: 6 }, (_, index) => toddlerLetters[(start + index) % toddlerLetters.length]);
+    const start = round % letterPool.length;
+    const pool = Array.from({ length: 6 }, (_, index) => letterPool[(start + index) % letterPool.length]);
     return pool.includes(targetLetter) ? pool : [targetLetter, ...pool.slice(1)];
-  }, [round, targetLetter]);
+  }, [letterPool, round, targetLetter]);
 
   const visibleAnimals = useMemo(() => {
     const start = round % toddlerAnimals.length;
@@ -94,7 +112,9 @@ export function ToddlerLetterGame() {
   }, [round, targetAnimal]);
 
   useEffect(() => {
-    setSetupComplete(window.localStorage.getItem(SETUP_KEY) === SETUP_VERSION);
+    const complete = window.localStorage.getItem(SETUP_KEY) === SETUP_VERSION;
+    setSetupComplete(complete);
+    setMode(complete && window.sessionStorage.getItem(WELCOMED_KEY) === "true" ? "home" : "welcome");
     setMuted(window.localStorage.getItem(MUTE_KEY) === "true");
 
     const storedClips = window.localStorage.getItem(VOICE_KEY);
@@ -180,6 +200,7 @@ export function ToddlerLetterGame() {
       celebrating: true
     }));
     setStars((current) => current + 1);
+    triggerHaptic([18, 40, 18]);
     playPop();
     playClap();
     playCheer();
@@ -194,6 +215,7 @@ export function ToddlerLetterGame() {
 
   function retry(id: string) {
     setFeedback((current) => ({ ...current, wrongChoice: id }));
+    triggerHaptic(12);
     playBuzzer();
     window.setTimeout(() => setFeedback((current) => ({ ...current, wrongChoice: null })), 620);
   }
@@ -224,13 +246,13 @@ export function ToddlerLetterGame() {
     setFedCount(0);
     playPop();
     const prompts: Record<MiniGameId, string> = {
-      bubbles: t("game.pop"),
+      bubbles: t("game.tapBubbles"),
       monster: t("game.feedMonster"),
-      fishing: `${t("game.catch")} ${targetLetter}!`,
-      star: t("game.catchStar")
+      fishing: formatDragPrompt(language, targetLetter),
+      star: t("game.catchFish")
     };
     if (id === "fishing") {
-      void playInstruction(t("game.catch"), targetLetter);
+      void playInstruction(t("game.drag"), targetLetter);
       return;
     }
     void voiceQueue.speak(prompts[id], 3);
@@ -249,6 +271,12 @@ export function ToddlerLetterGame() {
     window.localStorage.setItem(VOICE_KEY, JSON.stringify(parentVoiceClips));
     window.localStorage.setItem(SETUP_KEY, SETUP_VERSION);
     setSetupComplete(true);
+    setMode("welcome");
+  }
+
+  function startWelcome() {
+    window.sessionStorage.setItem(WELCOMED_KEY, "true");
+    chooseMode("home");
   }
 
   if (!storageReady) {
@@ -301,12 +329,17 @@ export function ToddlerLetterGame() {
           setSetupComplete(false);
           setParentOpen(false);
         }}
+        language={language}
+        setLanguage={setLanguage}
         t={t}
       />
 
       <AnimatePresence mode="wait">
         {mode === "home" ? (
           <HomeToy key="home" onChoose={chooseMode} mascotHappy={feedback.celebrating} t={t} />
+        ) : null}
+        {mode === "welcome" ? (
+          <WelcomeToy key="welcome" onStart={startWelcome} t={t} />
         ) : null}
         {mode === "letters" ? (
           <LettersMode key="letters" target={targetLetter} letters={floatingLetters} wrongChoice={feedback.wrongChoice} celebrating={feedback.celebrating} onPick={chooseLetter} t={t} />
@@ -319,6 +352,8 @@ export function ToddlerLetterGame() {
             key="minis"
             activeMini={activeMini}
             targetLetter={targetLetter}
+            letterPool={letterPool}
+            language={language}
             wrongChoice={feedback.wrongChoice}
             fedCount={fedCount}
             onChooseMini={playMini}
@@ -625,6 +660,41 @@ function formatDuration(seconds: number) {
   return `${minutes}:${String(remainder).padStart(2, "0")}`;
 }
 
+function WelcomeToy({ onStart, t }: { onStart: () => void; t: Translate }) {
+  return (
+    <motion.div
+      className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-5xl flex-col items-center justify-center gap-7 py-8 text-center"
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+    >
+      <motion.div
+        className="relative grid h-44 w-44 place-items-center rounded-[3rem] bg-white/72 text-8xl shadow-lift backdrop-blur sm:h-64 sm:w-64 sm:text-9xl"
+        animate={{ y: [0, -12, 0], rotate: [0, 3, -3, 0] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        aria-hidden="true"
+      >
+        <span className="absolute -right-4 -top-4 grid h-16 w-16 place-items-center rounded-full bg-banana text-3xl shadow-soft">⭐</span>
+        {mascotFaces.happy}
+      </motion.div>
+      <div className="grid gap-2">
+        <h1 className="text-5xl font-black text-ink dark:text-white sm:text-7xl">{t("home.welcomeTitle")}</h1>
+        <p className="text-2xl font-black text-berry sm:text-3xl">{t("home.welcomeTagline")}</p>
+      </div>
+      <motion.button
+        className="min-h-20 rounded-[2rem] bg-berry px-10 text-3xl font-black text-white shadow-lift outline-none ring-offset-4 focus:ring-8 focus:ring-banana"
+        whileTap={{ scale: 0.92 }}
+        animate={{ scale: [1, 1.04, 1] }}
+        transition={{ duration: 1.7, repeat: Infinity, ease: "easeInOut" }}
+        onClick={onStart}
+        type="button"
+      >
+        {t("home.getStarted")}
+      </motion.button>
+    </motion.div>
+  );
+}
+
 function HomeToy({ onChoose, mascotHappy, t }: { onChoose: (mode: Mode) => void; mascotHappy: boolean; t: Translate }) {
   const buttons: Array<{ mode: Mode; label: string; emoji: string; className: string }> = [
     { mode: "letters", label: t("home.letters"), emoji: "🔤", className: "bg-[#ff7aa8]" },
@@ -755,7 +825,31 @@ function AnimalsMode({ target, animals, wrongChoice, celebrating, onPick, t }: {
   );
 }
 
-function MiniGamesMode({ activeMini, targetLetter, wrongChoice, fedCount, onChooseMini, onReward, onRetry, onFeed, t }: { activeMini: MiniGameId; targetLetter: string; wrongChoice: string | null; fedCount: number; onChooseMini: (id: MiniGameId) => void; onReward: (voice?: string) => void; onRetry: (id: string) => void; onFeed: () => void; t: Translate }) {
+function MiniGamesMode({
+  activeMini,
+  targetLetter,
+  letterPool,
+  language,
+  wrongChoice,
+  fedCount,
+  onChooseMini,
+  onReward,
+  onRetry,
+  onFeed,
+  t
+}: {
+  activeMini: MiniGameId;
+  targetLetter: string;
+  letterPool: readonly string[];
+  language: Language;
+  wrongChoice: string | null;
+  fedCount: number;
+  onChooseMini: (id: MiniGameId) => void;
+  onReward: (voice?: string) => void;
+  onRetry: (id: string) => void;
+  onFeed: () => void;
+  t: Translate;
+}) {
   return (
     <motion.div className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-6xl flex-col gap-4 py-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <div className="grid grid-cols-4 gap-2">
@@ -775,31 +869,85 @@ function MiniGamesMode({ activeMini, targetLetter, wrongChoice, fedCount, onChoo
       <div className="relative min-h-[31rem] flex-1 overflow-hidden rounded-[3rem] bg-white/35 shadow-soft backdrop-blur dark:bg-white/5">
         {activeMini === "bubbles" ? <BubblePop onReward={() => onReward(t("game.pop"))} t={t} /> : null}
         {activeMini === "monster" ? <FeedMonster fedCount={fedCount} onFeed={onFeed} /> : null}
-        {activeMini === "fishing" ? <FishingLetters target={targetLetter} wrongChoice={wrongChoice} onReward={onReward} onRetry={onRetry} t={t} /> : null}
-        {activeMini === "star" ? <CatchStar onReward={() => onReward(t("game.catchStar"))} t={t} /> : null}
+        {activeMini === "fishing" ? <DragLetters target={targetLetter} letterPool={letterPool} language={language} wrongChoice={wrongChoice} onReward={onReward} onRetry={onRetry} t={t} /> : null}
+        {activeMini === "star" ? <CatchFish onReward={() => onReward(t("game.catchFish"))} t={t} /> : null}
       </div>
     </motion.div>
   );
 }
 
 function BubblePop({ onReward, t }: { onReward: () => void; t: Translate }) {
+  const [popped, setPopped] = useState<string[]>([]);
+  const [wrongBubble, setWrongBubble] = useState<string | null>(null);
+  const correctCount = bubblePositions.length - 1;
+
+  function popBubble(id: string, isDecoy: boolean) {
+    if (isDecoy) {
+      setWrongBubble(id);
+      triggerHaptic(10);
+      window.setTimeout(() => setWrongBubble(null), 580);
+      return;
+    }
+
+    if (popped.includes(id)) {
+      return;
+    }
+
+    const nextPopped = [...popped, id];
+    setPopped(nextPopped);
+    triggerHaptic([12, 28, 12]);
+    onReward();
+
+    if (nextPopped.length >= correctCount) {
+      window.setTimeout(() => setPopped([]), 900);
+    }
+  }
+
   return (
     <div className="relative h-full min-h-[31rem]">
-      <MascotPrompt mascot="🫧" prompt={t("game.pop")} celebrating={false} compact />
-      {bubblePositions.map((position, index) => (
-        <motion.button
-          key={position}
-          className={cn("absolute grid h-28 w-28 place-items-center rounded-full bg-white/60 text-4xl shadow-lift backdrop-blur sm:h-36 sm:w-36", position)}
-          animate={{ y: [0, -18, 0], scale: [1, 1.08, 1] }}
-          transition={{ duration: 2.3 + index * 0.18, repeat: Infinity, ease: "easeInOut" }}
-          whileTap={{ scale: 0.35, opacity: 0 }}
-          onClick={onReward}
-          type="button"
-          aria-label={t("game.pop")}
-        >
-          🫧
-        </motion.button>
-      ))}
+      <MascotPrompt mascot="🫧" prompt={t("game.tapBubbles")} celebrating={false} compact />
+      <VisualInstruction label={t("game.tapBubbles")} />
+      <AnimatePresence>
+        {bubblePositions.map((position, index) => {
+          const id = `bubble-${index}`;
+          const isDecoy = index === 2;
+          if (popped.includes(id)) {
+            return (
+              <PopBurst key={`burst-${id}`} position={position} />
+            );
+          }
+
+          return (
+            <motion.button
+              key={id}
+              className={cn(
+                "absolute grid h-28 w-28 place-items-center rounded-full bg-white/60 text-5xl shadow-lift outline-none backdrop-blur focus:ring-8 focus:ring-banana/40 sm:h-36 sm:w-36",
+                position,
+                wrongBubble === id && "ring-8 ring-berry/30"
+              )}
+              initial={{ opacity: 0, scale: 0.65 }}
+              animate={
+                wrongBubble === id
+                  ? { x: [0, -9, 9, -5, 0], scale: [1, 0.96, 1] }
+                  : { x: [0, 10 + index * 2, -8, 0], y: [0, -22, 10, 0], scale: isDecoy ? [1, 1.02, 1] : [1, 1.12, 1] }
+              }
+              exit={{ opacity: 0, scale: [1, 1.4, 0], rotate: 18 }}
+              transition={wrongBubble === id ? { duration: 0.46 } : { duration: 4.6 + index * 0.25, repeat: Infinity, ease: "easeInOut" }}
+              whileTap={{ scale: 0.72 }}
+              onClick={() => popBubble(id, isDecoy)}
+              type="button"
+              aria-label={isDecoy ? t("game.tryAgain") : t("game.pop")}
+            >
+              {isDecoy ? "☁️" : "🫧"}
+            </motion.button>
+          );
+        })}
+      </AnimatePresence>
+      {wrongBubble ? (
+        <motion.p className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-white/75 px-5 py-2 text-xl font-black text-berry shadow-soft" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+          {t("game.tryAgain")}
+        </motion.p>
+      ) : null}
     </div>
   );
 }
@@ -823,19 +971,72 @@ function FeedMonster({ fedCount, onFeed }: { fedCount: number; onFeed: () => voi
   );
 }
 
-function FishingLetters({ target, wrongChoice, onReward, onRetry, t }: { target: string; wrongChoice: string | null; onReward: () => void; onRetry: (id: string) => void; t: Translate }) {
-  const choices = [target, toddlerLetters[(toddlerLetters.indexOf(target as (typeof toddlerLetters)[number]) + 2) % toddlerLetters.length], toddlerLetters[(toddlerLetters.indexOf(target as (typeof toddlerLetters)[number]) + 5) % toddlerLetters.length]];
+function DragLetters({
+  target,
+  letterPool,
+  language,
+  wrongChoice,
+  onReward,
+  onRetry,
+  t
+}: {
+  target: string;
+  letterPool: readonly string[];
+  language: Language;
+  wrongChoice: string | null;
+  onReward: () => void;
+  onRetry: (id: string) => void;
+  t: Translate;
+}) {
+  const dropRef = useRef<HTMLDivElement | null>(null);
+  const [successId, setSuccessId] = useState(0);
+  const targetIndex = Math.max(0, letterPool.indexOf(target));
+  const choices = Array.from({ length: Math.min(5, letterPool.length) }, (_, index) => letterPool[(targetIndex + index * 2) % letterPool.length]);
+
+  function handleDrop(letter: string, point: { x: number; y: number }) {
+    const rect = dropRef.current?.getBoundingClientRect();
+    const insideDropZone = rect ? point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom : false;
+
+    if (!insideDropZone) {
+      return;
+    }
+
+    if (letter === target) {
+      setSuccessId((current) => current + 1);
+      onReward();
+      return;
+    }
+
+    onRetry(letter);
+  }
 
   return (
-    <div className="relative h-full min-h-[31rem] bg-sky/10">
-      <MascotPrompt mascot="🎣" prompt={`${t("game.catch")} ${target}!`} celebrating={false} compact />
+    <div className="relative h-full min-h-[31rem] overflow-hidden bg-sky/10">
+      <MascotPrompt mascot="🧺" prompt={formatDragPrompt(language, target)} celebrating={false} compact />
+      <VisualInstruction label={formatDragPrompt(language, target)} drag />
+      <div className="absolute left-1/2 top-28 z-10 flex -translate-x-1/2 items-center gap-3 rounded-full bg-white/75 px-5 py-3 text-xl font-black text-ink shadow-soft">
+        <span className="text-sm uppercase tracking-[0.12em] text-berry">{t("game.target")}</span>
+        <span className="grid h-14 w-14 place-items-center rounded-full bg-banana text-4xl text-berry">{target}</span>
+      </div>
+      <motion.div
+        ref={dropRef}
+        className="absolute bottom-6 left-1/2 z-10 grid h-32 w-64 -translate-x-1/2 place-items-center rounded-[2.25rem] border-4 border-dashed border-banana bg-white/65 text-2xl font-black text-ink shadow-lift backdrop-blur sm:h-40 sm:w-80"
+        animate={{ scale: [1, 1.04, 1], boxShadow: ["0 20px 55px rgba(255, 209, 102, 0.20)", "0 26px 75px rgba(255, 122, 168, 0.32)", "0 20px 55px rgba(255, 209, 102, 0.20)"] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <span className="text-5xl" aria-hidden="true">🧺</span>
+        {t("game.dropHere")}
+      </motion.div>
+      <AnimatePresence>
+        {successId ? <PopBurst key={`letter-success-${successId}`} position="left-1/2 top-1/2" /> : null}
+      </AnimatePresence>
       {choices.map((letter, index) => {
         const path = letterSwim[(index + 2) % letterSwim.length];
         return (
           <motion.button
             key={`${target}-${letter}`}
             className={cn(
-              "absolute grid h-28 w-36 place-items-center rounded-full text-6xl font-black shadow-lift sm:h-32 sm:w-44 sm:text-7xl",
+              "absolute z-20 grid h-28 w-36 cursor-grab place-items-center rounded-full text-6xl font-black shadow-lift outline-none active:cursor-grabbing sm:h-32 sm:w-44 sm:text-7xl",
               letter === target ? "bg-banana/90 text-berry ring-8 ring-banana/45" : "bg-white/70 text-sky",
               wrongChoice === letter && "bg-red-400 text-white ring-8 ring-red-200"
             )}
@@ -846,10 +1047,14 @@ function FishingLetters({ target, wrongChoice, onReward, onRetry, t }: { target:
                 : { x: path.x, y: path.y, rotate: path.rotate, scale: letter === target ? [1, 1.14, 1] : [1, 1.04, 1] }
             }
             transition={wrongChoice === letter ? { duration: 0.4 } : { duration: path.duration, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-            whileTap={{ scale: 0.86 }}
-            onClick={() => (letter === target ? onReward() : onRetry(letter))}
+            drag
+            dragSnapToOrigin
+            dragElastic={0.14}
+            whileDrag={{ scale: 1.18, zIndex: 40, rotate: 0 }}
+            whileTap={{ scale: 0.96 }}
+            onDragEnd={(_, info) => handleDrop(letter, info.point)}
             type="button"
-            aria-label={`${t("game.catch")} ${letter}`}
+            aria-label={`${t("game.drag")} ${letter}`}
           >
             {letter}
           </motion.button>
@@ -859,23 +1064,109 @@ function FishingLetters({ target, wrongChoice, onReward, onRetry, t }: { target:
   );
 }
 
-function CatchStar({ onReward, t }: { onReward: () => void; t: Translate }) {
+function CatchFish({ onReward, t }: { onReward: () => void; t: Translate }) {
+  const [caught, setCaught] = useState(false);
+  const [swimRound, setSwimRound] = useState(0);
+  const paths = [
+    { x: ["8vw", "58vw", "28vw", "68vw", "16vw"], y: ["16vh", "22vh", "48vh", "34vh", "56vh"], rotate: [-5, 8, -10, 6, -4] },
+    { x: ["62vw", "18vw", "72vw", "34vw", "54vw"], y: ["54vh", "34vh", "18vh", "58vh", "28vh"], rotate: [6, -10, 8, -7, 4] },
+    { x: ["26vw", "72vw", "52vw", "10vw", "64vw"], y: ["22vh", "42vh", "60vh", "36vh", "18vh"], rotate: [-4, 10, 5, -9, 7] }
+  ];
+  const path = paths[swimRound % paths.length];
+
+  function catchFish() {
+    if (caught) {
+      return;
+    }
+
+    setCaught(true);
+    triggerHaptic([20, 35, 20]);
+    onReward();
+    window.setTimeout(() => {
+      setCaught(false);
+      setSwimRound((current) => current + 1);
+    }, 950);
+  }
+
   return (
     <div className="relative h-full min-h-[31rem]">
-      <MascotPrompt mascot="🌟" prompt={t("game.catchStar")} celebrating={false} compact />
-      <motion.button
-        className="absolute grid h-40 w-40 place-items-center rounded-full bg-banana text-8xl shadow-lift"
-        initial={{ x: "18vw", y: "22vh" }}
-        animate={{ x: ["8vw", "62vw", "28vw", "70vw"], y: ["14vh", "20vh", "56vh", "42vh"], rotate: [0, 120, 240, 360], scale: [1, 1.12, 0.96, 1.08] }}
-        transition={{ duration: 5, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-        whileTap={{ scale: 0.72 }}
-        onClick={onReward}
-        type="button"
-        aria-label={t("game.catchStar")}
-      >
-        ⭐
-      </motion.button>
+      <MascotPrompt mascot="🐟" prompt={t("game.catchFish")} celebrating={false} compact />
+      <VisualInstruction label={t("game.catchFish")} />
+      <AnimatePresence>
+        {!caught ? (
+          <motion.button
+            key={`fish-${swimRound}`}
+            className="absolute grid h-32 w-44 place-items-center rounded-full bg-white/55 shadow-lift outline-none backdrop-blur focus:ring-8 focus:ring-banana/40 sm:h-40 sm:w-56"
+            initial={{ opacity: 0, x: path.x[0], y: path.y[0], scale: 0.7 }}
+            animate={{ opacity: 1, x: path.x, y: path.y, rotate: path.rotate, scale: [1, 1.06, 0.98, 1.04, 1] }}
+            exit={{ opacity: 0, scale: 0.2, rotate: 24 }}
+            transition={{ duration: 5.8, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+            whileTap={{ scale: 0.8 }}
+            onClick={catchFish}
+            type="button"
+            aria-label={t("game.catchFish")}
+          >
+            <CuteRedFish />
+            <span className="pointer-events-none absolute -right-4 top-1 text-2xl">🫧</span>
+            <span className="pointer-events-none absolute -right-8 top-8 text-xl">🫧</span>
+          </motion.button>
+        ) : (
+          <motion.div
+            key={`splash-${swimRound}`}
+            className="absolute left-1/2 top-1/2 grid h-44 w-44 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-sky/40 text-7xl shadow-lift"
+            initial={{ opacity: 0, scale: 0.4 }}
+            animate={{ opacity: [0, 1, 0], scale: [0.4, 1.45, 1.8], rotate: [0, -8, 8] }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.82, ease: "easeOut" }}
+          >
+            💦✨
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+function VisualInstruction({ label, drag = false }: { label: string; drag?: boolean }) {
+  return (
+    <div className="pointer-events-none absolute right-5 top-28 z-30 hidden items-center gap-2 rounded-full bg-white/65 px-4 py-2 text-sm font-black text-ink shadow-soft backdrop-blur sm:flex">
+      <motion.span
+        className="text-3xl"
+        animate={drag ? { x: [0, -22, 20, 0], y: [0, 10, -6, 0], rotate: [0, -10, 8, 0] } : { y: [0, -10, 0], scale: [1, 1.16, 1] }}
+        transition={{ duration: drag ? 1.8 : 1.2, repeat: Infinity, ease: "easeInOut" }}
+        aria-hidden="true"
+      >
+        👆
+      </motion.span>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function PopBurst({ position }: { position: string }) {
+  return (
+    <motion.div
+      className={cn("pointer-events-none absolute grid h-28 w-28 place-items-center rounded-full text-5xl sm:h-36 sm:w-36", position)}
+      initial={{ opacity: 0, scale: 0.45 }}
+      animate={{ opacity: [0, 1, 0], scale: [0.45, 1.35, 1.65], rotate: [0, -12, 10] }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.72, ease: "easeOut" }}
+    >
+      🌸✨
+    </motion.div>
+  );
+}
+
+function CuteRedFish() {
+  return (
+    <span className="relative block h-20 w-32" aria-hidden="true">
+      <span className="absolute left-8 top-4 h-14 w-20 rounded-[60%_48%_48%_60%] bg-gradient-to-br from-[#ff5a70] via-[#ff7a59] to-[#ffb000] shadow-soft" />
+      <span className="absolute left-1 top-7 h-0 w-0 border-y-[18px] border-r-[34px] border-y-transparent border-r-[#ff5a70]" />
+      <span className="absolute right-2 top-8 h-3 w-3 rounded-full bg-ink" />
+      <span className="absolute right-0 top-11 h-2 w-5 rounded-full bg-white/75" />
+      <span className="absolute left-16 top-0 h-6 w-8 rotate-[-14deg] rounded-full bg-[#ffd166]/80" />
+      <span className="absolute left-14 bottom-0 h-6 w-8 rotate-[18deg] rounded-full bg-[#ffd166]/80" />
+    </span>
   );
 }
 
@@ -901,6 +1192,8 @@ function ParentPanel({
   onReset,
   onToggleMute,
   onRedoSetup,
+  language,
+  setLanguage,
   t
 }: {
   open: boolean;
@@ -911,6 +1204,8 @@ function ParentPanel({
   onReset: () => void;
   onToggleMute: () => void;
   onRedoSetup: () => void;
+  language: Language;
+  setLanguage: (language: Language) => void;
   t: Translate;
 }) {
   return (
@@ -923,6 +1218,10 @@ function ParentPanel({
             {voiceClipCount > 0 ? t("parent.clipsSaved") : t("parent.builtIn")}
           </p>
           <div className="mt-4 grid gap-2">
+            <div className="rounded-[1.25rem] bg-banana/25 p-2">
+              <p className="mb-1 px-2 text-xs font-black uppercase tracking-[0.12em] text-berry">{t("parent.changeLanguage")}</p>
+              <LanguageSelector language={language} setLanguage={setLanguage} t={t} />
+            </div>
             <button className="rounded-full bg-banana px-5 py-3 text-sm font-black text-ink" onClick={onToggleMute} type="button">
               {muted ? t("parent.soundOn") : t("parent.mute")}
             </button>

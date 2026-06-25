@@ -9,6 +9,8 @@ struct RootView: View {
 
             Group {
                 switch app.screen {
+                case .welcome:
+                    WelcomeView()
                 case .parentSetup:
                     ParentVoiceSetupView()
                 case .home:

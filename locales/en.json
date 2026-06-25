@@ -29,14 +29,23 @@
     "animals": "Animals",
     "miniGames": "Mini Games",
     "parentArea": "Parent area",
-    "home": "Home"
+    "home": "Home",
+    "welcomeTitle": "Little Learners",
+    "welcomeTagline": "Let's learn and play together!",
+    "getStarted": "Get Started"
   },
   "game": {
     "catch": "Catch",
+    "drag": "Drag",
     "find": "Find",
     "pop": "Pop!",
+    "tapBubbles": "Tap the bubbles!",
     "feedMonster": "Feed monster!",
-    "catchStar": "Catch star!"
+    "catchStar": "Catch the Fish!",
+    "catchFish": "Catch the Fish!",
+    "tryAgain": "Try again",
+    "dropHere": "Drop here",
+    "target": "Target"
   },
   "parent": {
     "title": "Parent area",
@@ -45,6 +54,7 @@
     "builtIn": "Using built-in happy voices.",
     "mute": "Mute",
     "soundOn": "Sound on",
+    "changeLanguage": "Change language",
     "recordVoices": "Record voices",
     "reset": "Reset",
     "close": "Close"

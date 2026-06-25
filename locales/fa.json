@@ -29,14 +29,23 @@
     "animals": "حیوانات",
     "miniGames": "بازی‌ها",
     "parentArea": "بخش والدین",
-    "home": "خانه"
+    "home": "خانه",
+    "welcomeTitle": "Little Learners",
+    "welcomeTagline": "بیا با هم یاد بگیریم و بازی کنیم!",
+    "getStarted": "شروع کنیم"
   },
   "game": {
     "catch": "بگیر",
+    "drag": "بکش",
     "find": "پیدا کن",
     "pop": "بترکان!",
+    "tapBubbles": "روی حباب‌ها بزن!",
     "feedMonster": "به هیولا غذا بده!",
-    "catchStar": "ستاره را بگیر!"
+    "catchStar": "ماهی را بگیر!",
+    "catchFish": "ماهی را بگیر!",
+    "tryAgain": "دوباره تلاش کن",
+    "dropHere": "اینجا بنداز",
+    "target": "هدف"
   },
   "parent": {
     "title": "بخش والدین",
@@ -45,6 +54,7 @@
     "builtIn": "از صداهای شاد پیش‌فرض استفاده می‌شود.",
     "mute": "بی‌صدا",
     "soundOn": "صدا روشن",
+    "changeLanguage": "تغییر زبان",
     "recordVoices": "ضبط صداها",
     "reset": "شروع دوباره",
     "close": "بستن"

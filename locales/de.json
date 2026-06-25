@@ -29,14 +29,23 @@
     "animals": "Tiere",
     "miniGames": "Mini-Spiele",
     "parentArea": "Elternbereich",
-    "home": "Start"
+    "home": "Start",
+    "welcomeTitle": "Little Learners",
+    "welcomeTagline": "Lass uns gemeinsam lernen und spielen!",
+    "getStarted": "Los geht's"
   },
   "game": {
     "catch": "Fang",
+    "drag": "Zieh",
     "find": "Finde",
     "pop": "Plopp!",
+    "tapBubbles": "Tippe die Blasen!",
     "feedMonster": "Monster füttern!",
-    "catchStar": "Stern fangen!"
+    "catchStar": "Fang den Fisch!",
+    "catchFish": "Fang den Fisch!",
+    "tryAgain": "Noch einmal",
+    "dropHere": "Hier ablegen",
+    "target": "Ziel"
   },
   "parent": {
     "title": "Elternbereich",
@@ -45,6 +54,7 @@
     "builtIn": "Es werden eingebaute fröhliche Stimmen verwendet.",
     "mute": "Stumm",
     "soundOn": "Ton an",
+    "changeLanguage": "Sprache ändern",
     "recordVoices": "Stimmen aufnehmen",
     "reset": "Zurücksetzen",
     "close": "Schließen"

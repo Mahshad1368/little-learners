@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 @MainActor
 final class AppViewModel: ObservableObject {
@@ -33,7 +34,7 @@ final class AppViewModel: ObservableObject {
 
     init() {
         let complete = defaults.bool(forKey: PersistenceKeys.setupComplete)
-        screen = complete ? .home : .parentSetup
+        screen = complete ? .home : .welcome
         starCount = defaults.integer(forKey: PersistenceKeys.starCount)
         isMuted = defaults.bool(forKey: PersistenceKeys.muted)
         voiceClips = Self.loadVoiceClips()
@@ -64,7 +65,7 @@ final class AppViewModel: ObservableObject {
         }
         voiceClips = []
         defaults.set(false, forKey: PersistenceKeys.setupComplete)
-        screen = .parentSetup
+        screen = .welcome
         showParentPanel = false
     }
 
@@ -86,6 +87,7 @@ final class AppViewModel: ObservableObject {
         starCount += 1
         defaults.set(starCount, forKey: PersistenceKeys.starCount)
 
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         soundEffects.playPop()
         soundEffects.playClap()
         soundEffects.playCheer()
@@ -97,6 +99,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func wrongAnswer() {
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
         soundEffects.playSoftBuzzer()
     }
 

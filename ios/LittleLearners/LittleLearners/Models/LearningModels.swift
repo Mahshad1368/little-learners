@@ -1,6 +1,7 @@
 import Foundation
 
 enum AppScreen: Equatable {
+    case welcome
     case parentSetup
     case home
     case letters
@@ -63,6 +64,8 @@ struct LocalizedCopy {
     let language: String
     let catchWord: String
     let findWord: String
+    let welcomeTagline: String
+    let getStarted: String
 }
 
 extension AppLanguage {
@@ -84,7 +87,9 @@ extension AppLanguage {
                 duration: "Duration",
                 language: "Language",
                 catchWord: "Catch",
-                findWord: "Find"
+                findWord: "Find",
+                welcomeTagline: "Let's learn and play together!",
+                getStarted: "Get Started"
             )
         case .de:
             return LocalizedCopy(
@@ -102,7 +107,9 @@ extension AppLanguage {
                 duration: "Dauer",
                 language: "Sprache",
                 catchWord: "Fang",
-                findWord: "Finde"
+                findWord: "Finde",
+                welcomeTagline: "Lass uns gemeinsam lernen und spielen!",
+                getStarted: "Los geht's"
             )
         case .fa:
             return LocalizedCopy(
@@ -120,7 +127,9 @@ extension AppLanguage {
                 duration: "مدت زمان",
                 language: "زبان",
                 catchWord: "بگیر",
-                findWord: "پیدا کن"
+                findWord: "پیدا کن",
+                welcomeTagline: "بیا با هم یاد بگیریم و بازی کنیم!",
+                getStarted: "شروع کنیم"
             )
         }
     }
