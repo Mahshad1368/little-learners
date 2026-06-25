@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   title: "Little Learners",
   description: "A simple playful letter game for toddlers aged 2 to 4.",
   icons: {
-    icon: "/favicon.svg"
+    icon: "/little-learners-icon.png",
+    apple: "/little-learners-icon.png"
   }
 };
 
