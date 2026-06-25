@@ -60,7 +60,7 @@ struct ParentSettingsPanel: View {
                     Button {
                         app.language = language
                     } label: {
-                        Text(language.displayName)
+                        Text(language.rawValue)
                             .font(.system(.callout, design: .rounded, weight: .black))
                             .foregroundStyle(app.language == language ? ToyTheme.ink : ToyTheme.ink.opacity(0.70))
                             .frame(maxWidth: .infinity, minHeight: 46)

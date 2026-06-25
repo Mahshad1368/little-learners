@@ -11,6 +11,9 @@ struct AnimalsGameView: View {
                 GeometryReader { proxy in
                     ForEach(Array(viewModel.tokens.enumerated()), id: \.element.id) { index, token in
                         FloatingChoiceButton(token: token, wrong: viewModel.wrongTokenID == token.id) {
+                            if token.label == viewModel.target.name {
+                                app.soundEffects.playAnimalSound(viewModel.target.soundPrompt)
+                            }
                             viewModel.choose(token, app: app)
                         }
                         .position(position(for: index, in: proxy.size, itemSize: 146))
@@ -27,6 +30,7 @@ struct AnimalsGameView: View {
             viewModel.startRound()
             Task {
                 await app.voiceQueue.playAnimalInstruction(action: app.language.copy.findWord, animal: viewModel.target, language: app.language)
+                app.soundEffects.playAnimalSound(viewModel.target.soundPrompt)
             }
         }
     }

@@ -114,7 +114,7 @@ export function ToddlerLetterGame() {
   const [voiceClips, setVoiceClips] = useState<RecordedVoiceClip[]>([]);
   const [muted, setMuted] = useState(false);
   const voiceQueue = useVoiceQueue(muted);
-  const { playBuzzer, playCheer, playClap, playPop, playSparkle } = useSoundEffects(muted);
+  const { playAnimalSound, playBuzzer, playCheer, playClap, playPop, playSparkle } = useSoundEffects(muted);
 
   const letterPool = localizedLetters[language] ?? localizedLetters.en;
   const targetLetter = letterPool[round % letterPool.length];
@@ -204,7 +204,7 @@ export function ToddlerLetterGame() {
 
     await voiceQueue.speak(`${t("game.find")} ${animal.name}`, 3);
     await wait(120);
-    await voiceQueue.speak(animal.sound, 3);
+    playAnimalSound(animal.sound);
   }
 
   async function playEncouragement(fallbackVoice: string) {
@@ -272,7 +272,13 @@ export function ToddlerLetterGame() {
     if (feedback.celebrating) {
       return;
     }
-    name === targetAnimal.name ? reward(sound) : retry(name);
+    if (name === targetAnimal.name) {
+      playAnimalSound(sound);
+      reward();
+      return;
+    }
+
+    retry(name);
   }
 
   function playMini(id: MiniGameId) {
@@ -630,7 +636,7 @@ function LanguageSelector({ language, setLanguage, t }: { language: Language; se
       >
         {options.map((option) => (
           <option key={option} value={option}>
-            {t(`language.${option}`)}
+            {option}
           </option>
         ))}
       </select>
@@ -689,49 +695,44 @@ function formatDuration(seconds: number) {
 function WelcomeToy({ onStart, t }: { onStart: () => void; t: Translate }) {
   return (
     <motion.div
-      className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-5xl flex-col items-center justify-center gap-7 py-8 text-center"
+      className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] w-full max-w-6xl flex-col justify-end overflow-hidden rounded-[2.5rem] px-5 pb-7 text-center shadow-lift sm:px-10 sm:pb-10"
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.96 }}
     >
-      <motion.div
-        className="relative grid h-44 w-44 place-items-center rounded-[3rem] bg-white/72 text-8xl shadow-lift backdrop-blur sm:h-64 sm:w-64 sm:text-9xl"
-        animate={{ y: [0, -12, 0], rotate: [0, 3, -3, 0] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        aria-hidden="true"
-      >
-        <span className="absolute -right-4 -top-4 grid h-16 w-16 place-items-center rounded-full bg-banana text-3xl shadow-soft">⭐</span>
-        {mascotFaces.happy}
-      </motion.div>
-      <div className="grid gap-2">
-        <h1 className="text-5xl font-black text-ink dark:text-white sm:text-7xl">{t("home.welcomeTitle")}</h1>
-        <p className="text-2xl font-black text-berry sm:text-3xl">{t("home.welcomeTagline")}</p>
+      <div className="absolute inset-0 bg-[url('/family.png')] bg-cover bg-center" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gradient-to-t from-white/92 via-white/20 to-white/5" aria-hidden="true" />
+      <div className="relative mx-auto grid max-w-2xl gap-3 rounded-[2rem] border border-white/70 bg-white/58 px-5 py-5 shadow-lift backdrop-blur-md">
+        <h1 className="text-5xl font-black text-berry drop-shadow-sm sm:text-7xl">{t("home.welcomeTitle")}</h1>
+        <p className="text-xl font-black text-ink sm:text-3xl">{t("home.welcomeTagline")}</p>
+        <motion.button
+          className="mx-auto mt-2 min-h-16 rounded-full bg-gradient-to-r from-berry via-[#ff8f70] to-banana px-10 text-2xl font-black text-white shadow-lift outline-none ring-offset-4 focus:ring-8 focus:ring-banana"
+          whileTap={{ scale: 0.92 }}
+          animate={{ scale: [1, 1.04, 1] }}
+          transition={{ duration: 1.7, repeat: Infinity, ease: "easeInOut" }}
+          onClick={onStart}
+          type="button"
+        >
+          {t("home.getStarted")}
+        </motion.button>
       </div>
-      <motion.button
-        className="min-h-20 rounded-[2rem] bg-berry px-10 text-3xl font-black text-white shadow-lift outline-none ring-offset-4 focus:ring-8 focus:ring-banana"
-        whileTap={{ scale: 0.92 }}
-        animate={{ scale: [1, 1.04, 1] }}
-        transition={{ duration: 1.7, repeat: Infinity, ease: "easeInOut" }}
-        onClick={onStart}
-        type="button"
-      >
-        {t("home.getStarted")}
-      </motion.button>
     </motion.div>
   );
 }
 
 function HomeToy({ onChoose, mascotHappy, t }: { onChoose: (mode: Mode) => void; mascotHappy: boolean; t: Translate }) {
   const buttons: Array<{ mode: Mode; label: string; emoji: string; className: string }> = [
-    { mode: "letters", label: t("home.letters"), emoji: "🔤", className: "bg-[#ff7aa8]" },
-    { mode: "animals", label: t("home.animals"), emoji: "🦁", className: "bg-[#7dd3fc]" },
-    { mode: "minis", label: t("home.miniGames"), emoji: "⭐", className: "bg-[#86efac]" }
+    { mode: "letters", label: t("home.letters"), emoji: "🔤", className: "from-[#ff4f9a]/86 via-[#ff86bd]/78 to-white/36" },
+    { mode: "animals", label: t("home.animals"), emoji: "🦁", className: "from-[#30b8ff]/86 via-[#7dd3fc]/76 to-white/36" },
+    { mode: "minis", label: t("home.miniGames"), emoji: "⭐", className: "from-[#35e08a]/86 via-[#7af0b2]/76 to-white/36" }
   ];
 
   return (
-    <motion.div className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-5xl flex-col items-center justify-center gap-7 py-6" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}>
+    <motion.div className="relative z-10 mx-auto flex min-h-[calc(100svh-10rem)] max-w-5xl flex-col items-center justify-center gap-7 overflow-hidden rounded-[2.5rem] px-4 py-6" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}>
+      <div className="absolute inset-0 bg-[url('/family.png')] bg-cover bg-center opacity-25" aria-hidden="true" />
+      <div className="absolute inset-0 bg-white/42 backdrop-blur-[2px] dark:bg-slate-950/45" aria-hidden="true" />
       <motion.div
-        className="grid h-40 w-40 place-items-center rounded-full bg-white/70 text-8xl shadow-lift backdrop-blur sm:h-52 sm:w-52 sm:text-9xl"
+        className="relative grid h-40 w-40 place-items-center rounded-full border border-white/80 bg-white/62 text-8xl shadow-lift backdrop-blur-xl sm:h-52 sm:w-52 sm:text-9xl"
         animate={mascotHappy ? { scale: [1, 1.18, 1], rotate: [0, -8, 8, 0] } : { y: [0, -16, 0], rotate: [0, 4, -4, 0] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         aria-hidden="true"
@@ -742,7 +743,7 @@ function HomeToy({ onChoose, mascotHappy, t }: { onChoose: (mode: Mode) => void;
         {buttons.map((button, index) => (
           <motion.button
             key={button.mode}
-            className={cn("min-h-36 rounded-[2.5rem] px-4 text-4xl font-black text-white shadow-lift outline-none ring-offset-4 focus:ring-8 focus:ring-banana sm:min-h-56 sm:text-5xl", button.className)}
+            className={cn("crystal-button min-h-36 rounded-[3.5rem] bg-gradient-to-br px-4 text-4xl font-black text-white outline-none ring-offset-4 focus:ring-8 focus:ring-banana sm:min-h-56 sm:text-5xl", button.className)}
             animate={{ y: [0, -8, 0], rotate: [0, index % 2 === 0 ? 1.5 : -1.5, 0] }}
             transition={{ duration: 2.4 + index * 0.25, repeat: Infinity, ease: "easeInOut" }}
             whileTap={{ scale: 0.93 }}
@@ -1003,8 +1004,13 @@ function DragLetters({
 }) {
   const dropRef = useRef<HTMLDivElement | null>(null);
   const [successId, setSuccessId] = useState(0);
+  const [placedLetter, setPlacedLetter] = useState<string | null>(null);
   const targetIndex = Math.max(0, letterPool.indexOf(target));
   const choices = Array.from({ length: Math.min(5, letterPool.length) }, (_, index) => letterPool[(targetIndex + index * 2) % letterPool.length]);
+
+  useEffect(() => {
+    setPlacedLetter(null);
+  }, [target]);
 
   function handleDrop(letter: string, point: { x: number; y: number }) {
     const rect = dropRef.current?.getBoundingClientRect();
@@ -1015,6 +1021,7 @@ function DragLetters({
     }
 
     if (letter === target) {
+      setPlacedLetter(letter);
       setSuccessId((current) => current + 1);
       onReward();
       return;
@@ -1038,12 +1045,26 @@ function DragLetters({
         transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
       >
         <span className="text-5xl" aria-hidden="true">🧺</span>
+        {placedLetter ? (
+          <motion.span
+            key={placedLetter}
+            className="grid h-16 w-16 place-items-center rounded-full bg-banana text-5xl font-black text-berry shadow-lift"
+            initial={{ scale: 0.55, y: -18, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+          >
+            {placedLetter}
+          </motion.span>
+        ) : null}
         {t("game.dropHere")}
       </motion.div>
       <AnimatePresence>
         {successId ? <PopBurst key={`letter-success-${successId}`} position="left-1/2 top-1/2" /> : null}
       </AnimatePresence>
       {choices.map((letter, index) => {
+        if (letter === placedLetter) {
+          return null;
+        }
+
         const path = miniChoiceLayouts[index % miniChoiceLayouts.length];
         return (
           <motion.button

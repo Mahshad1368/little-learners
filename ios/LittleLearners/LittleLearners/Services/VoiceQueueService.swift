@@ -48,7 +48,6 @@ final class VoiceQueueService: NSObject, AVSpeechSynthesizerDelegate {
         await enqueue {
             await self.speak(action, priority: .instruction, language: language)
             await self.speak(animal.name, priority: .target, language: language)
-            await self.speak(animal.soundPrompt, priority: .target, language: .en)
         }
     }
 

@@ -132,6 +132,7 @@ private struct DragLettersGame: View {
     let app: AppViewModel
     @ObservedObject var viewModel: MiniGamesViewModel
     @State private var dragOffsets: [String: CGSize] = [:]
+    @State private var placedLetter: String?
 
     var body: some View {
         GeometryReader { proxy in
@@ -161,6 +162,14 @@ private struct DragLettersGame: View {
                     VStack(spacing: 4) {
                         Text("🧺")
                             .font(.system(size: 44))
+                        if let placedLetter {
+                            Text(placedLetter)
+                                .font(.system(size: 48, weight: .black, design: .rounded))
+                                .foregroundStyle(ToyTheme.berry)
+                                .frame(width: 64, height: 64)
+                                .background(ToyTheme.banana, in: Circle())
+                                .transition(.scale.combined(with: .opacity))
+                        }
                         Text(app.language == .fa ? "اینجا بنداز" : "Drop here")
                             .font(.system(.headline, design: .rounded, weight: .black))
                     }
@@ -169,8 +178,13 @@ private struct DragLettersGame: View {
                 .position(x: dropZone.midX, y: dropZone.midY)
 
             ForEach(Array(choices.enumerated()), id: \.element) { index, letter in
-                draggableLetter(letter, index: index, size: proxy.size, dropZone: dropZone)
+                if letter != placedLetter {
+                    draggableLetter(letter, index: index, size: proxy.size, dropZone: dropZone)
+                }
             }
+        }
+        .onChange(of: viewModel.targetLetter.symbol) { _, _ in
+            placedLetter = nil
         }
     }
 
@@ -208,6 +222,7 @@ private struct DragLettersGame: View {
                         let finalPoint = CGPoint(x: origin.x + value.translation.width, y: origin.y + value.translation.height)
                         if dropZone.contains(finalPoint) {
                             if letter == viewModel.targetLetter.symbol {
+                                placedLetter = letter
                                 viewModel.reward(app: app)
                             } else {
                                 viewModel.retry(letter: letter, app: app)

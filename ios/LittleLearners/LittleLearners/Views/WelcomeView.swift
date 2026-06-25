@@ -4,24 +4,21 @@ struct WelcomeView: View {
     @EnvironmentObject private var app: AppViewModel
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
+        ZStack {
+            Image("WelcomeArt")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            LinearGradient(colors: [.clear, .white.opacity(0.28), .white.opacity(0.94)], startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+
+            VStack(spacing: 18) {
                 header
-
-                HStack(alignment: .center, spacing: 20) {
-                    heroArt
-                    headline
-                }
-                .padding(22)
-                .background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 34, style: .continuous))
-                .shadow(color: ToyTheme.ink.opacity(0.12), radius: 24, x: 0, y: 16)
-
+                Spacer()
+                headline
                 startButton
             }
-            .padding(.horizontal, 22)
-            .padding(.vertical, 24)
-            .frame(maxWidth: 920)
-            .frame(maxWidth: .infinity)
+            .padding(22)
         }
         .environment(\.layoutDirection, app.language.isRTL ? .rightToLeft : .leftToRight)
     }
@@ -48,7 +45,7 @@ struct WelcomeView: View {
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "globe")
-                Text(app.language.displayName)
+                Text(app.language.rawValue)
                     .lineLimit(1)
             }
             .font(.system(.headline, design: .rounded, weight: .black))
@@ -58,15 +55,6 @@ struct WelcomeView: View {
             .background(.white.opacity(0.78), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
         .accessibilityLabel(app.language.copy.language)
-    }
-
-    private var heroArt: some View {
-        Image("WelcomeArt")
-            .resizable()
-            .interpolation(.high)
-            .scaledToFit()
-            .frame(maxWidth: 420)
-            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
     }
 
     private var headline: some View {
@@ -80,6 +68,10 @@ struct WelcomeView: View {
                 .foregroundStyle(ToyTheme.ink.opacity(0.72))
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .padding(20)
+        .background(.white.opacity(0.62), in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 28, style: .continuous).stroke(.white.opacity(0.76), lineWidth: 1))
+        .shadow(color: ToyTheme.ink.opacity(0.14), radius: 20, x: 0, y: 12)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 

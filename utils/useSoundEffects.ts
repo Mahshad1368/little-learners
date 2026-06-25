@@ -35,6 +35,23 @@ function playNoiseBurst(context: AudioContext, start: number, duration: number, 
   source.start(start);
 }
 
+function bendTone(context: AudioContext, start: number, from: number, to: number, duration: number, type: OscillatorType = "sine", volume = 0.14) {
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(from, start);
+  oscillator.frequency.exponentialRampToValueAtTime(to, start + duration);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(volume, start + 0.025);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.start(start);
+  oscillator.stop(start + duration + 0.03);
+}
+
 export function useSoundEffects(muted = false) {
   const getContext = () => {
     if (muted || typeof window === "undefined") {
@@ -117,5 +134,48 @@ export function useSoundEffects(muted = false) {
     playTone(context, 320, context.currentTime, 0.09, "sine", 0.09);
   };
 
-  return { playBuzzer, playCheer, playClap, playPop, playSoftBoop, playSparkle };
+  const playAnimalSound = (sound: string) => {
+    const context = getContext();
+    if (!context) {
+      return;
+    }
+
+    const now = context.currentTime;
+    const key = sound.toLowerCase();
+
+    if (key.includes("moo")) {
+      bendTone(context, now, 170, 92, 0.58, "sawtooth", 0.16);
+      bendTone(context, now + 0.06, 118, 76, 0.62, "triangle", 0.13);
+      return;
+    }
+
+    if (key.includes("roar")) {
+      playNoiseBurst(context, now, 0.42, 0.20);
+      bendTone(context, now, 130, 62, 0.48, "sawtooth", 0.15);
+      return;
+    }
+
+    if (key.includes("woof")) {
+      bendTone(context, now, 230, 120, 0.16, "square", 0.15);
+      bendTone(context, now + 0.19, 210, 105, 0.16, "square", 0.14);
+      return;
+    }
+
+    if (key.includes("meow")) {
+      bendTone(context, now, 520, 880, 0.22, "sine", 0.14);
+      bendTone(context, now + 0.18, 880, 430, 0.26, "triangle", 0.12);
+      return;
+    }
+
+    if (key.includes("quack")) {
+      bendTone(context, now, 360, 280, 0.12, "sawtooth", 0.14);
+      bendTone(context, now + 0.16, 390, 300, 0.12, "sawtooth", 0.13);
+      return;
+    }
+
+    bendTone(context, now, 980, 1320, 0.08, "square", 0.09);
+    bendTone(context, now + 0.1, 1120, 1480, 0.08, "square", 0.09);
+  };
+
+  return { playAnimalSound, playBuzzer, playCheer, playClap, playPop, playSoftBoop, playSparkle };
 }

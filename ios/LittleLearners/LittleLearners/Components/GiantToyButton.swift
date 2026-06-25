@@ -19,8 +19,29 @@ struct GiantToyButton: View {
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity, minHeight: 154)
             .padding(.horizontal, 16)
-            .background(color.gradient, in: RoundedRectangle(cornerRadius: 34, style: .continuous))
-            .shadow(color: color.opacity(0.32), radius: 18, x: 0, y: 12)
+            .background {
+                RoundedRectangle(cornerRadius: 48, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [color.opacity(0.92), color.opacity(0.72), .white.opacity(0.34)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .overlay(alignment: .topLeading) {
+                        RoundedRectangle(cornerRadius: 48, style: .continuous)
+                            .fill(.white.opacity(0.34))
+                            .frame(height: 62)
+                            .blur(radius: 1)
+                            .padding(.horizontal, 18)
+                            .padding(.top, 12)
+                    }
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 48, style: .continuous)
+                            .stroke(.white.opacity(0.72), lineWidth: 1.5)
+                    }
+            }
+            .shadow(color: color.opacity(0.38), radius: 22, x: 0, y: 14)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
