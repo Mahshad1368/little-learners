@@ -602,7 +602,7 @@ function ParentSetupScreen({
           <div className="flex min-w-0 items-center gap-3">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-banana text-2xl shadow-soft" aria-hidden="true">⭐</span>
             <div className="min-w-0">
-              <p className="truncate text-lg font-black text-ink dark:text-white">Little Learners</p>
+              <p className="truncate text-lg font-black text-ink dark:text-white">KiddoLearny</p>
               <p className="text-xs font-black uppercase tracking-[0.14em] text-berry">{t("setup.eyebrow")}</p>
             </div>
           </div>

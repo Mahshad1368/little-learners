@@ -95,7 +95,7 @@ extension AppLanguage {
         switch self {
         case .en:
             return LocalizedCopy(
-                appName: "Little Learners",
+                appName: "KiddoLearny",
                 welcomeTitle: "hey Baby",
                 parentOnly: "For Parents Only",
                 setupTitle: "Parent Voice Setup",
@@ -137,7 +137,7 @@ extension AppLanguage {
             )
         case .de:
             return LocalizedCopy(
-                appName: "Little Learners",
+                appName: "KiddoLearny",
                 welcomeTitle: "Hallo Baby",
                 parentOnly: "Nur für Eltern",
                 setupTitle: "Stimme der Eltern einrichten",
@@ -179,7 +179,7 @@ extension AppLanguage {
             )
         case .fa:
             return LocalizedCopy(
-                appName: "Little Learners",
+                appName: "KiddoLearny",
                 welcomeTitle: "سلام کوچولو",
                 parentOnly: "فقط برای والدین",
                 setupTitle: "تنظیم صدای والدین",

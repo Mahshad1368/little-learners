@@ -5,11 +5,11 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Little Learners",
+  title: "KiddoLearny",
   description: "A simple playful letter game for toddlers aged 2 to 4.",
   icons: {
-    icon: "/little-learners-icon.png",
-    apple: "/little-learners-icon.png"
+    icon: "/kiddolearny-icon.png",
+    apple: "/kiddolearny-icon.png"
   }
 };
 

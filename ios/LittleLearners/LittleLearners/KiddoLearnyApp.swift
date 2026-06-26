@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct LittleLearnersApp: App {
+struct KiddoLearnyApp: App {
     @StateObject private var appViewModel = AppViewModel()
 
     var body: some Scene {

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		1A0A00012C00000100000001 /* LittleLearners */ = {
+		1A0A00012C00000100000001 /* KiddoLearny */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = LittleLearners;
 			sourceTree = "<group>";
@@ -28,7 +28,7 @@
 		1A0A00032C00000100000003 = {
 			isa = PBXGroup;
 			children = (
-				1A0A00012C00000100000001 /* LittleLearners */,
+				1A0A00012C00000100000001 /* KiddoLearny */,
 				1A0A00042C00000100000004 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,9 +43,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1A0A00062C00000100000006 /* LittleLearners */ = {
+		1A0A00062C00000100000006 /* KiddoLearny */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1A0A00072C00000100000007 /* Build configuration list for PBXNativeTarget "LittleLearners" */;
+			buildConfigurationList = 1A0A00072C00000100000007 /* Build configuration list for PBXNativeTarget "KiddoLearny" */;
 			buildPhases = (
 				1A0A00082C00000100000008 /* Sources */,
 				1A0A00022C00000100000002 /* Frameworks */,
@@ -56,12 +56,12 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				1A0A00012C00000100000001 /* LittleLearners */,
+				1A0A00012C00000100000001 /* KiddoLearny */,
 			);
-			name = LittleLearners;
+			name = KiddoLearny;
 			packageProductDependencies = (
 			);
-			productName = LittleLearners;
+			productName = KiddoLearny;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -79,7 +79,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 1A0A000B2C0000010000000B /* Build configuration list for PBXProject "LittleLearners" */;
+			buildConfigurationList = 1A0A000B2C0000010000000B /* Build configuration list for PBXProject "KiddoLearny" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -93,7 +93,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1A0A00062C00000100000006 /* LittleLearners */,
+				1A0A00062C00000100000006 /* KiddoLearny */,
 			);
 		};
 /* End PBXProject section */
@@ -246,8 +246,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5UAB2YDZ59;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Little Learners";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Little Learners records a parent voice so children can hear familiar encouragement.";
+				INFOPLIST_KEY_CFBundleDisplayName = KiddoLearny;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "KiddoLearny records a parent voice so children can hear familiar encouragement.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -258,8 +258,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.littlelearners.app;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mahshadjafari.kiddolearny;
+				PRODUCT_NAME = KiddoLearny;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -274,8 +274,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5UAB2YDZ59;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Little Learners";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Little Learners records a parent voice so children can hear familiar encouragement.";
+				INFOPLIST_KEY_CFBundleDisplayName = KiddoLearny;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "KiddoLearny records a parent voice so children can hear familiar encouragement.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -286,8 +286,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.littlelearners.app;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mahshadjafari.kiddolearny;
+				PRODUCT_NAME = KiddoLearny;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -297,7 +297,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1A0A00072C00000100000007 /* Build configuration list for PBXNativeTarget "LittleLearners" */ = {
+		1A0A00072C00000100000007 /* Build configuration list for PBXNativeTarget "KiddoLearny" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1A0A000E2C0000010000000E /* Debug */,
@@ -306,7 +306,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1A0A000B2C0000010000000B /* Build configuration list for PBXProject "LittleLearners" */ = {
+		1A0A000B2C0000010000000B /* Build configuration list for PBXProject "KiddoLearny" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1A0A000C2C0000010000000C /* Debug */,

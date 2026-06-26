@@ -1,6 +1,6 @@
-# Little Learners
+# KiddoLearny
 
-Little Learners is a toddler-first interactive toy for children aged 2-4. It is designed to feel alive and tactile: children catch floating letters, tap moving animals, pop bubbles, feed a monster, fish for letters, and chase stars with voice prompts, happy sounds, and instant rewards.
+KiddoLearny is a toddler-first interactive toy for children aged 2-4. It is designed to feel alive and tactile: children catch floating letters, tap moving animals, pop bubbles, feed a monster, fish for letters, and chase stars with voice prompts, happy sounds, and instant rewards.
 
 ## Features
 
