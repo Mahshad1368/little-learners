@@ -4,21 +4,25 @@ struct WelcomeView: View {
     @EnvironmentObject private var app: AppViewModel
 
     var body: some View {
-        ZStack {
-            Image("WelcomeArt")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-            LinearGradient(colors: [.clear, .white.opacity(0.28), .white.opacity(0.94)], startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea()
+        GeometryReader { proxy in
+            ZStack {
+                Image("WelcomeArt")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                    .clipped()
+                    .ignoresSafeArea()
+                LinearGradient(colors: [.clear, .white.opacity(0.28), .white.opacity(0.94)], startPoint: .top, endPoint: .bottom)
+                    .ignoresSafeArea()
 
-            VStack(spacing: 18) {
-                header
-                Spacer()
-                headline
-                startButton
+                VStack(spacing: 18) {
+                    header
+                    Spacer()
+                    headline
+                    startButton
+                }
+                .padding(22)
             }
-            .padding(22)
         }
         .environment(\.layoutDirection, app.language.isRTL ? .rightToLeft : .leftToRight)
     }
