@@ -8,7 +8,7 @@ struct WelcomeView: View {
             ZStack {
                 Image("WelcomeArt")
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(width: proxy.size.width, height: proxy.size.height)
                     .clipped()
                     .ignoresSafeArea()
