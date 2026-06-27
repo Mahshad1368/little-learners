@@ -6,14 +6,14 @@ struct ParentVoiceSetupView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 22) {
+            VStack(spacing: 14) {
                 header
                 heroCard
                 VoiceSlotCard(viewModel: viewModel, preview: playPreview)
                 bottomActions
             }
             .padding(.horizontal, 22)
-            .padding(.vertical, 24)
+            .padding(.vertical, 16)
             .frame(maxWidth: 920)
             .frame(maxWidth: .infinity)
         }
@@ -59,7 +59,7 @@ struct ParentVoiceSetupView: View {
     }
 
     private var heroCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             Text(app.language.copy.setupTitle)
                 .font(.system(size: 42, weight: .black, design: .rounded))
                 .foregroundStyle(ToyTheme.ink)
@@ -80,10 +80,10 @@ struct ParentVoiceSetupView: View {
                         .foregroundStyle(ToyTheme.ink.opacity(0.68))
                 }
             }
-            .padding(18)
+            .padding(14)
             .background(ToyTheme.banana.opacity(0.28), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
-        .padding(24)
+        .padding(20)
         .background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 34, style: .continuous))
         .shadow(color: ToyTheme.ink.opacity(0.12), radius: 24, x: 0, y: 16)
     }
@@ -138,11 +138,11 @@ private struct VoiceSlotCard: View {
     private let kind: VoiceClipKind = .encouragement
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 10) {
             Text("🎙️")
-                .font(.system(size: 64))
-                .frame(width: 110, height: 110)
-                .background(ToyTheme.berry.opacity(0.14), in: RoundedRectangle(cornerRadius: 32, style: .continuous))
+                .font(.system(size: 48))
+                .frame(width: 78, height: 78)
+                .background(ToyTheme.berry.opacity(0.14), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
 
             VStack(spacing: 6) {
                 Text(app.language.copy.micLabel)
@@ -162,23 +162,28 @@ private struct VoiceSlotCard: View {
                     viewModel.stop()
                 }
                 .primaryToyButton(color: .red)
+            } else if viewModel.hasClip(kind) {
+                HStack(spacing: 10) {
+                    Button(app.language.copy.recordAgain) {
+                        viewModel.recordAgain(kind: kind)
+                    }
+                    .primaryToyButton(color: ToyTheme.berry)
+
+                    Button(app.language.copy.playPreview) {
+                        if let clip = viewModel.clip(for: kind) {
+                            preview(clip)
+                        }
+                    }
+                    .primaryToyButton(color: ToyTheme.banana, foreground: ToyTheme.ink)
+                }
             } else {
                 Button(viewModel.hasClip(kind) ? app.language.copy.recordAgain : app.language.copy.startRecording) {
                     viewModel.hasClip(kind) ? viewModel.recordAgain(kind: kind) : viewModel.start(kind: kind)
                 }
                 .primaryToyButton(color: ToyTheme.berry)
             }
-
-            Button(app.language.copy.playPreview) {
-                if let clip = viewModel.clip(for: kind) {
-                    preview(clip)
-                }
-            }
-            .primaryToyButton(color: ToyTheme.banana, foreground: ToyTheme.ink)
-            .disabled(!viewModel.hasClip(kind))
-            .opacity(viewModel.hasClip(kind) ? 1 : 0.45)
         }
-        .padding(22)
+        .padding(16)
         .background(.white.opacity(0.86), in: RoundedRectangle(cornerRadius: 32, style: .continuous))
         .shadow(color: ToyTheme.ink.opacity(0.12), radius: 18, x: 0, y: 12)
         .environment(\.layoutDirection, app.language.isRTL ? .rightToLeft : .leftToRight)
